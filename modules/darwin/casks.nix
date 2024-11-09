@@ -1,26 +1,34 @@
 _:
 
 [
-  # Development Tools
-  "homebrew/cask/docker"
-  "visual-studio-code"
-
-  # Communication Tools
+  "1password"
+  "airbuddy"
+  "audacity"
+  "bartender"
+  "bettertouchtool"
+  "daisydisk"
+  "dash"
+  "deckset"
   "discord"
-  "notion"
-  "slack"
-  "telegram"
-  "zoom"
-
-  # Utility Tools
-  "syncthing"
-
-  # Entertainment Tools
-  "vlc"
-
-  # Productivity Tools
-  "raycast"
-
-  # Browsers
+  "element"
+  "elgato-stream-deck"
+  "elgato-wave-link"
+  "firefox-developer-edition"
   "google-chrome"
+  "gpg-suite"
+  "istat-menus"
+  "jetbrains-toolbox"
+  "lunar"
+  "macfuse"
+  "monodraw"
+  "numi"
+  "obs"
+  "obsidian"
+  "orbstack"
+  "paw"
+  "raycast"
+  "rectangle-pro"
+  "screenflow"
+  "sensei"
+  "tableplus"
 ]

@@ -26,7 +26,16 @@ in
   homebrew = {
     enable = true;
     casks = pkgs.callPackage ./casks.nix {};
-    # onActivation.cleanup = "uninstall";
+    onActivation = {
+      autoUpdate = true;
+      upgrade = true;
+      cleanup = "zap";
+    };
+    global = {
+      brewfile = true;
+    };
+
+    taps = [];
 
     # These app IDs are from using the mas CLI app
     # mas = mac app store
@@ -40,8 +49,37 @@ in
     # This message is safe to ignore. (https://github.com/dustinlyons/nixos-config/issues/83)
 
     masApps = {
-      "1password" = 1333542190;
-      "wireguard" = 1451685025;
+      "1Blocker" = 1365531024;
+      "1Password for Safari" = 1569813296;
+      "Cardhop" = 1290358394;
+      "Fantastical" = 975937182;
+      "Pile" = 1549454338;
+      "Pixelmator Pro" = 1289583905;
+      "Slack" = 803453959;
+      "Things 3" = 904280696;
+
+      "Pages" = 409201541;
+      "Keynote" = 409203825;
+      "Numbers" = 409183694;
+
+      "MainStage 3" = 634159523;
+      "Logic Pro X" = 634148309;
+
+      "Final Cut Pro" = 424389933;
+
+      "iA Writer" = 775737590;
+      "MindNode" = 1289197285;
+      "UlyssesMac" = 1225570693;
+
+      "Xcode" = 497799835;
+
+      "Day Progress" = 6450280202;
+      # "Structured" = 1499198946;
+
+      "TestFlight" = 899247664;
+
+      "Flighty" = 1358823008;
+      "Kindle" = 302584613;
     };
   };
 
@@ -69,9 +107,9 @@ in
   };
 
   # Fully declarative dock using the latest from Nix Store
-  local = { 
+  local = {
     dock = {
-      enable = true;
+      enable = false;
       entries = [
         { path = "/Applications/Slack.app/"; }
         { path = "/System/Applications/Messages.app/"; }

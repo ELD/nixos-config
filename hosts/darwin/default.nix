@@ -40,20 +40,11 @@ let user = "edattore"; in
 
   # Load configuration that is shared across systems
   environment.systemPackages = with pkgs; [
-    emacs-unstable
     agenix.packages."${pkgs.system}".default
   ] ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 
-  launchd.user.agents.emacs.path = [ config.environment.systemPath ];
-  launchd.user.agents.emacs.serviceConfig = {
-    KeepAlive = true;
-    ProgramArguments = [
-      "/bin/sh"
-      "-c"
-      "/bin/wait4path ${pkgs.emacs}/bin/emacs && exec ${pkgs.emacs}/bin/emacs --fg-daemon"
-    ];
-    StandardErrorPath = "/tmp/emacs.err.log";
-    StandardOutPath = "/tmp/emacs.out.log";
+  security = {
+    pam.enableSudoTouchIdAuth = true;
   };
 
   system = {
@@ -63,33 +54,51 @@ let user = "edattore"; in
       NSGlobalDomain = {
         AppleShowAllExtensions = true;
         ApplePressAndHoldEnabled = false;
+        AppleShowScrollBars = "Automatic";
 
         # 120, 90, 60, 30, 12, 6, 2
-        KeyRepeat = 2;
+        KeyRepeat = 1;
 
         # 120, 94, 68, 35, 25, 15
-        InitialKeyRepeat = 15;
+        InitialKeyRepeat = 10;
 
-        "com.apple.mouse.tapBehavior" = 1;
+        "com.apple.mouse.tapBehavior" = 0;
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
       };
 
       dock = {
-        autohide = false;
+        autohide = true;
+        autohide-delay = 0.0;
+        autohide-time-modifier = 1.0;
         show-recents = false;
         launchanim = true;
         orientation = "bottom";
-        tilesize = 48;
+        tilesize = 96;
+        static-only = false;
+        showhidden = false;
+        show-process-indicators = true;
+        mru-spaces = false;
       };
 
       finder = {
-        _FXShowPosixPathInTitle = false;
+        _FXShowPosixPathInTitle = true;
+        FXEnableExtensionChangeWarning = true;
+        AppleShowAllExtensions = true;
       };
 
       trackpad = {
-        Clicking = true;
+        Clicking = false;
         TrackpadThreeFingerDrag = true;
+        ActuationStrength = 1;
+        FirstClickThreshold = 1;
+        TrackpadRightClick = true;
+      };
+
+      alf = {
+        globalstate = 1;
+        loggingenabled = 0;
+        stealthenabled = 1;
       };
     };
   };
