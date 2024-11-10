@@ -1,6 +1,5 @@
 { pkgs, config, ... }:
 {
-
   ".cargo/config.toml".source = (pkgs.formats.toml {}).generate "cargo-config" {
     build = {
       rustc-wrapper = "${pkgs.sccache}/bin/sccache";
