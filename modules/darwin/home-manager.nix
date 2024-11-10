@@ -117,26 +117,19 @@ in
     dock = {
       enable = false;
       entries = [
+        { path = "/System/Applications/Launchpad.app"; }
+        { path = "/Applications/Ghostty.app"; }
+        { path = "/System/Cryptexes/App/System/Applications/Safari.app"; }
+        { path = "/System/Applications/Messages.app"; }
+        { path = "/System/Applications/Mail.app"; }
+        { path = "/Applications/UlyssesMac.app"; }
+        { path = "/Applications/Obsidian.app"; }
+        { path = "/Applications/Things3.app"; }
+        { path = "/Applications/Structured.app"; }
         { path = "/Applications/Slack.app/"; }
-        { path = "/System/Applications/Messages.app/"; }
-        { path = "/System/Applications/Facetime.app/"; }
-        { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
-        { path = "/System/Applications/Music.app/"; }
-        { path = "/System/Applications/News.app/"; }
-        { path = "/System/Applications/Photos.app/"; }
-        { path = "/System/Applications/Photo Booth.app/"; }
-        { path = "/System/Applications/TV.app/"; }
-        { path = "/System/Applications/Home.app/"; }
-        {
-          path = "${config.users.users.${user}.home}/.local/share/";
-          section = "others";
-          options = "--sort name --view grid --display folder";
-        }
-        {
-          path = "${config.users.users.${user}.home}/.local/share/downloads";
-          section = "others";
-          options = "--sort name --view grid --display stack";
-        }
+        { path = "/Applications/Discord.app"; }
+        { path = "/Applications/Fantastical.app"; }
+        { path = "/System/Applications/Music.app"; }
       ];
     };
   };
