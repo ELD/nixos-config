@@ -108,8 +108,8 @@ in
               "modules/shared/config/spartanvim");
           recursive = true;
         };
-        ghostty = {
-            source = builtins.readFile ./config/ghostty;
+        "ghostty/config" = {
+            source = ../shared/config/ghostty;
         };
       };
     };
