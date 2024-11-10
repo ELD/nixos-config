@@ -14,7 +14,7 @@ _:
   "element"
   "elgato-stream-deck"
   "elgato-wave-link"
-  "firefox-developer-edition"
+  "firefox@developer-edition"
   "google-chrome"
   "gpg-suite"
   "istat-menus"
