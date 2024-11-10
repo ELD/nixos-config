@@ -3,7 +3,7 @@
 let user = "edattore"; in
 {
   age.identityPaths = [
-    "/Users/${user}/.ssh/id_ed25519"
+    "${secrets}/identities/edattore-5c.txt"
   ];
 
   # Your secrets go here
@@ -16,22 +16,22 @@ let user = "edattore"; in
   #       If you change the key name, you'll need to update the SSH configuration in shared/home-manager.nix
   #       so Github reads it correctly.
 
-  #
-  # age.secrets."github-ssh-key" = {
-  #   symlink = true;
-  #   path = "/Users/${user}/.ssh/id_github";
-  #   file =  "${secrets}/github-ssh-key.age";
-  #   mode = "600";
-  #   owner = "${user}";
-  #   group = "staff";
-  # };
 
-  # age.secrets."github-signing-key" = {
-  #   symlink = false;
-  #   path = "/Users/${user}/.ssh/pgp_github.key";
-  #   file =  "${secrets}/github-signing-key.age";
-  #   mode = "600";
-  #   owner = "${user}";
-  # };
+  age.secrets."mac-licenses" = {
+    symlink = true;
+    path = "/Users/${user}/mac-licenses.md";
+    file =  "${secrets}/mac-licenses.age";
+    mode = "600";
+    owner = "${user}";
+    group = "staff";
+  };
+
+  age.secrets."netrc" = {
+    symlink = false;
+    path = "/Users/${user}/.netrc";
+    file =  "${secrets}/netrc.age";
+    mode = "600";
+    owner = "${user}";
+  };
 
 }

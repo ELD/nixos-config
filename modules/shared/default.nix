@@ -1,8 +1,4 @@
 { config, pkgs, ... }:
-
-let
-  emacsOverlaySha256 = "06413w510jmld20i4lik9b36cfafm501864yq8k4vxl5r4hn0j0h";
-in
 {
 
   nixpkgs = {
@@ -19,11 +15,24 @@ in
       map (n: import (path + ("/" + n)))
           (filter (n: match ".*\\.nix" n != null ||
                       pathExists (path + ("/" + n + "/default.nix")))
-                  (attrNames (readDir path)))
+                  (attrNames (readDir path)));
+  };
 
-      ++ [(import (builtins.fetchTarball {
-               url = "https://github.com/dustinlyons/emacs-overlay/archive/refs/heads/master.tar.gz";
-               sha256 = emacsOverlaySha256;
-           }))];
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+  };
+
+  fonts = {
+    packages = with pkgs; [
+      open-sans
+      (nerdfonts.override {
+        fonts = [
+          "JetBrainsMono"
+          "Recursive"
+          "Monaspace"
+        ];
+      })
+    ];
   };
 }

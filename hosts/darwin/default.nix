@@ -62,7 +62,7 @@ let user = "edattore"; in
         # 120, 94, 68, 35, 25, 15
         InitialKeyRepeat = 10;
 
-        "com.apple.mouse.tapBehavior" = 0;
+        "com.apple.mouse.tapBehavior" = null;
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
       };

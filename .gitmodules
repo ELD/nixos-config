@@ -1,0 +1,3 @@
+[submodule "modules/shared/config/spartanvim"]
+	path = modules/shared/config/spartanvim
+	url = git@github.com:ELD/spartanvim.git

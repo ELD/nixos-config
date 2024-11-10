@@ -3,6 +3,7 @@ _:
 [
   "1password"
   "airbuddy"
+  "arc"
   "audacity"
   "bartender"
   "bettertouchtool"

@@ -3,12 +3,9 @@
 let
   user = "edattore";
   # Define the content of your file as a derivation
-  myEmacsLauncher = pkgs.writeScript "emacs-launcher.command" ''
-    #!/bin/sh
-    emacsclient -c -n &
-  '';
   sharedFiles = import ../shared/files.nix { inherit config pkgs; };
   additionalFiles = import ./files.nix { inherit user config pkgs; };
+  mkFullPathRelativeToNixpkgs = homeDirectory: relative: "${homeDirectory}/.nixos-config/${relative}";
 in
 {
   imports = [
@@ -93,7 +90,6 @@ in
         file = lib.mkMerge [
           sharedFiles
           additionalFiles
-          { "emacs-launcher.command".source = myEmacsLauncher; }
         ];
 
         stateVersion = "23.11";
@@ -103,6 +99,16 @@ in
       # Marked broken Oct 20, 2022 check later to remove this
       # https://github.com/nix-community/home-manager/issues/3344
       manual.manpages.enable = false;
+
+      xdg.configFile =
+      {
+        nvim = {
+          source =
+            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/edattore"
+              "modules/shared/config/spartanvim");
+          recursive = true;
+        };
+      };
     };
   };
 
@@ -121,10 +127,6 @@ in
         { path = "/System/Applications/Photo Booth.app/"; }
         { path = "/System/Applications/TV.app/"; }
         { path = "/System/Applications/Home.app/"; }
-        {
-          path = toString myEmacsLauncher;
-          section = "others";
-        }
         {
           path = "${config.users.users.${user}.home}/.local/share/";
           section = "others";

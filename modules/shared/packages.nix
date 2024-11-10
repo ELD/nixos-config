@@ -1,61 +1,108 @@
 { pkgs }:
 
 with pkgs; [
-  # General packages for development and system management
-  alacritty
-  aspell
-  aspellDicts.en
-  bash-completion
-  bat
-  btop
-  coreutils
-  killall
-  neofetch
-  openssh
-  sqlite
-  wget
-  zip
+  # Formatters and LSP tools
+  nixfmt-rfc-style
 
-  # Encryption and security tools
+  # Encryption/decryption tools
   age
   age-plugin-yubikey
   gnupg
-  libfido2
 
-  # Cloud-related tools and SDKs
-  docker
-  docker-compose
+  # Go dev tools
+  air
 
-  # Media-related packages
-  emacs-all-the-icons-fonts
-  dejavu_fonts
-  ffmpeg
+  # Nix tools
+  attic-client
+  cachix
+  comma
+  deadnix
+  devenv
+  nix
+  statix
+  yubikey-manager
+
+  # JavaScript tools
+  bun
+  nodejs_latest
+  nodePackages.pnpm
+  yarn
+
+  # Golang tools
+  golangci-lint
+  templ
+
+  # Java tools
+  jdk11
+
+  # Lua
+  luajit
+  luajitPackages.luarocks
+
+  # VM/Containers
+  colima
+
+  # CI/CD and Cloud
+  circleci-cli
+  cirrus-cli
+  doctl
+  flyctl
+  terraform
+  turso-cli
+
+  # Rust tools
+  bacon
+  cargo-nextest
+  cargo-expand
+  cargo-outdated
+  cargo-shuttle
+  cargo-sweep
+  cargo-vet
+  cargo-wipe
+  diesel-cli
+  evcxr
+  rustup
+  sqlx-cli
+  sccache
+
+  # Python tools
+  python3Full
+  python3Packages.pip
+  python3Packages.jupyter_core
+  python3Packages.ipython
+  python3Packages.ipykernel
+  python3Packages.fonttools
+  pylint
+  pipenv
+
+  # LaTeX/Typesetting
+  tectonic
+  typst
+  texliveFull
+
+  # General utilities
+  coreutils-full
+  curl
+  du-dust
   fd
-  font-awesome
-  hack-font
-  noto-fonts
-  noto-fonts-emoji
-  meslo-lgs-nf
-
-  # Node.js development tools
-  nodePackages.npm # globally install npm
-  nodePackages.prettier
-  nodejs
-
-  # Text and terminal utilities
-  htop
-  hunspell
-  iftop
-  jetbrains-mono
+  findutils
+  fontforge
+  gawk
+  git
+  gnugrep
+  gnused
   jq
+  neofetch
+  openssh
+  pre-commit
+  ranger
   ripgrep
+  ripgrep-all
+  tealdeer
   tree
-  tmux
-  unrar
+  treefmt
   unzip
-  zsh-powerlevel10k
-
-  # Python packages
-  python39
-  python39Packages.virtualenv # globally install virtualenv
+  wget
+  yt-dlp
+  yq
 ]
