@@ -109,7 +109,10 @@ in
           recursive = true;
         };
         "ghostty/config" = {
-            source = ../shared/config/ghostty;
+          source = ../shared/config/ghostty;
+        };
+        "zsh/.p10k.zsh" = {
+          source = ../shared/config/p10k.zsh;
         };
       };
     };
@@ -118,7 +121,7 @@ in
   # Fully declarative dock using the latest from Nix Store
   local = {
     dock = {
-      enable = false;
+      enable = true;
       entries = [
         { path = "/System/Applications/Launchpad.app"; }
         { path = "/Applications/Ghostty.app"; }

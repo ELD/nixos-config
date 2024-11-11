@@ -1,10 +1,12 @@
-{ config, pkgs, agenix, secrets, ... }:
+{ config, lib, pkgs, agenix, secrets, ... }:
 
 let user = "edattore"; in
 {
   age.identityPaths = [
     "${secrets}/identities/edattore-5c.txt"
   ];
+
+  age.ageBin = "PATH=$PATH:${lib.makeBinPath [pkgs.age-plugin-yubikey]} ${pkgs.age}/bin/age";
 
   # Your secrets go here
   #

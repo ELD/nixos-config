@@ -285,6 +285,7 @@ let user = "edattore";
 
   environment.systemPackages = with pkgs; [
     agenix.packages."${pkgs.system}".default # "x86_64-linux"
+    age-yubikey-plugin
     gitAndTools.gitFull
     inetutils
   ];

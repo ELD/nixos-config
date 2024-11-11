@@ -82,23 +82,17 @@ let name = "Eric Dattore";
       CLICOLOR = 1;
       LS_COLORS = "ExFxBxDxCxegedabagacad";
       TERM = "xterm-256color";
+      EDITOR = "vim";
+      VISUAL = "vim";
+      PAGER = "bat";
     };
     shellAliases = aliases;
-    plugins = [
-      {
-          name = "powerlevel10k";
-          src = pkgs.zsh-powerlevel10k;
-          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-      }
-      {
-          name = "powerlevel10k-config";
-          src = lib.cleanSource ./config;
-          file = "p10k.zsh";
-      }
-    ];
-    initExtraFirst = ''
+    initExtra = ''
       ${functions}
       ${atuinZshExtras}
+      if [[ -f "$HOME/.config/zsh/.p10k.zsh" ]]; then
+        source "$HOME/.config/zsh/.p10k.zsh"
+      fi
     '';
 
     prezto = {
