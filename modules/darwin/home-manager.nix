@@ -32,7 +32,10 @@ in
       brewfile = true;
     };
 
-    taps = [];
+    taps = [
+      "homebrew/bundle"
+      "homebrew/cask"
+    ];
 
     # These app IDs are from using the mas CLI app
     # mas = mac app store

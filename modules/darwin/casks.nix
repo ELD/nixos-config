@@ -7,6 +7,7 @@ _:
   "audacity"
   "bartender"
   "bettertouchtool"
+  "chatgpt"
   "daisydisk"
   "dash"
   "deckset"
