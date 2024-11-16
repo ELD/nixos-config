@@ -33,9 +33,9 @@ let user = "edattore";
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
-    hostName = "%HOST%"; # Define your hostname.
-    useDHCP = false;
-    interfaces."%INTERFACE%".useDHCP = true;
+    hostName = "Indium"; # Define your hostname.
+    useDHCP = true;
+    # interfaces."%INTERFACE%".useDHCP = true;
   };
 
   nix = {
