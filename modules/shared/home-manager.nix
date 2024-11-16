@@ -35,6 +35,10 @@ let name = "Eric Dattore";
     };
   };
   dircolors.enable = true;
+  direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
   eza = {
     enable = true;
     enableZshIntegration = true;

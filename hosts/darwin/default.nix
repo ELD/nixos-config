@@ -60,6 +60,12 @@ let user = "edattore"; in
     age-plugin-yubikey
   ] ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 
+  networking = {
+    computerName = "Rhodium";
+    hostName = "Rhodium";
+    localHostName = "Rhodium";
+  };
+
   programs.gnupg = {
     agent.enable = true;
     agent.enableSSHSupport = true;
@@ -96,8 +102,8 @@ let user = "edattore"; in
         show-recents = false;
         launchanim = true;
         orientation = "bottom";
-        tilesize = 96;
-        largesize = 112;
+        tilesize = 80;
+        largesize = 96;
         static-only = false;
         showhidden = false;
         show-process-indicators = true;

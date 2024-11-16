@@ -83,6 +83,7 @@ with pkgs; [
   # General utilities
   coreutils-full
   curl
+  devenv
   du-dust
   fd
   findutils

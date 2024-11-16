@@ -1,0 +1,45 @@
+name: Check Nix Flake
+on: [push]
+jobs:
+    check:
+      permissions:
+        contents: read
+        id-token: write
+      strategy:
+        fail-fast: false
+        matrix:
+          platform:
+            - { name: Linux, distro: ubuntu-latest }
+            - { name: macOS, distro: macos-latest }
+      runs-on: ${{ matrix.platform.distro }}
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            submodules: recursive
+        - name: Check Nix flake inputs
+          uses: DeterminateSystems/flake-checker-action@v8
+        - name: Install Nix
+          uses: DeterminateSystems/nix-installer-action@v12
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Run the Magic Nix Cache
+          uses: DeterminateSystems/magic-nix-cache-action@v7
+        - name: Free Disk Space (Linux)
+          if: matrix.platform.name == 'Linux'
+          run: |
+              echo "Freeing up disk space on Linux CI"
+              df -h
+              sudo rm -rf /usr/share/dotnet/
+              sudo rm -rf /opt/ghc
+              sudo rm -rf /usr/local/share/boost
+              sudo rm -rf /usr/local/graalvm/
+              sudo rm -rf /usr/local/.ghcup/
+              sudo rm -rf /usr/local/share/powershell
+              sudo rm -rf /usr/local/share/chromium
+              sudo rm -rf /usr/local/lib/android
+              sudo rm -rf /usr/local/lib/node_modules
+              sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+              sudo docker image prune --all --force
+              df -h
+        - name: Check Nix Flake
+          run: nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure
