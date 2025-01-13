@@ -77,6 +77,8 @@ in
 
       "Flighty" = 1358823008;
       "Kindle" = 302584613;
+
+      "Balatro+" = 6502451661;
     };
   };
 
@@ -125,7 +127,7 @@ in
       entries = [
         { path = "/System/Applications/Launchpad.app"; }
         { path = "/Applications/Ghostty.app"; }
-        { path = "/System/Cryptexes/App/System/Applications/Safari.app"; }
+        { path = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/"; }
         { path = "/System/Applications/Messages.app"; }
         { path = "/System/Applications/Mail.app"; }
         { path = "/Applications/UlyssesMac.app"; }

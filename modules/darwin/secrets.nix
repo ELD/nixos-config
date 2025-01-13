@@ -36,4 +36,12 @@ let user = "edattore"; in
     owner = "${user}";
   };
 
+  age.secrets."openai-env" = {
+    symlink = true;
+    path = "/Users/${user}/.access/openai-env.sh";
+    file = "${secrets}/openai-env.age";
+    mode = "600";
+    owner = "${user}";
+    group = "staff";
+  };
 }

@@ -4,6 +4,9 @@ with pkgs; [
   # Formatters and LSP tools
   nixfmt-rfc-style
 
+  # Chat tools
+  # gomuks # NOTE: Broken because of a cryptographic dep
+
   # Encryption/decryption tools
   age
   age-plugin-yubikey
@@ -57,7 +60,7 @@ with pkgs; [
   cargo-outdated
   cargo-shuttle
   cargo-sweep
-  cargo-vet
+  # cargo-vet
   cargo-wipe
   diesel-cli
   evcxr
@@ -78,9 +81,12 @@ with pkgs; [
   # LaTeX/Typesetting
   tectonic
   typst
-  texliveFull
+  # NOTE: Uncomment when https://github.com/NixOS/nixpkgs/pull/373252 is merged
+  # texliveFull
 
   # General utilities
+  ascii-image-converter
+  chafa
   coreutils-full
   curl
   devenv

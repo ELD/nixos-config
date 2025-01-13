@@ -80,7 +80,7 @@ let user = "edattore"; in
 
     defaults = {
       NSGlobalDomain = {
-        AppleShowAllExtensions = true;
+        AppleShowAllExtensions = false;
         ApplePressAndHoldEnabled = false;
         AppleShowScrollBars = "Automatic";
 

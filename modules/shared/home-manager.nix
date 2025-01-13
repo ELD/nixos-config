@@ -85,7 +85,7 @@ let name = "Eric Dattore";
       DEFAULT_USER = "${config.home.username}";
       CLICOLOR = 1;
       LS_COLORS = "ExFxBxDxCxegedabagacad";
-      TERM = "xterm-256color";
+      # TERM = "xterm-256color";
       EDITOR = "vim";
       VISUAL = "vim";
       PAGER = "bat";
@@ -94,9 +94,9 @@ let name = "Eric Dattore";
     initExtra = ''
       ${functions}
       ${atuinZshExtras}
-      if [[ -f "$HOME/.config/zsh/.p10k.zsh" ]]; then
-        source "$HOME/.config/zsh/.p10k.zsh"
-      fi
+      # if [[ -f "$HOME/.config/zsh/.p10k.zsh" ]]; then
+      #   source "$HOME/.config/zsh/.p10k.zsh"
+      # fi
     '';
 
     prezto = {
@@ -138,7 +138,7 @@ let name = "Eric Dattore";
         windowTitleFormat = "%n@%m: %s %d";
         tabTitleFormat = "%m: %s %d";
       };
-      prompt = { theme = "powerlevel10k"; };
+      # prompt = { theme = "powerlevel10k"; };
     };
   };
 
@@ -209,5 +209,10 @@ let name = "Eric Dattore";
         "/Users/${user}/.ssh/config_external"
       )
     ];
+  };
+
+  starship = {
+    enable = true;
+    enableZshIntegration = true;
   };
 }

@@ -52,7 +52,7 @@
           #!/usr/bin/env bash
           PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
           echo "Running ${scriptName} for ${system}"
-          exec ${self}/apps/${system}/${scriptName}
+          exec ${self}/apps/${system}/${scriptName} $@
         '')}/bin/${scriptName}";
       };
       mkLinuxApps = system: {
@@ -79,14 +79,36 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
-        darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs = inputs;
-          modules = [
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-            {
-              nix-homebrew = {
+        {
+          Rhodium = darwin.lib.darwinSystem {
+            inherit system;
+            specialArgs = inputs;
+            modules = [
+              home-manager.darwinModules.home-manager
+              nix-homebrew.darwinModules.nix-homebrew
+              {
+                nix-homebrew = {
+                  inherit user;
+                  enable = true;
+                  taps = {
+                    "homebrew/homebrew-core" = homebrew-core;
+                    "homebrew/homebrew-cask" = homebrew-cask;
+                    "homebrew/homebrew-bundle" = homebrew-bundle;
+                  };
+                  mutableTaps = false;
+                  autoMigrate = true;
+                };
+              }
+              ./hosts/darwin
+            ];
+          };
+          "eric.dattore-mac" = darwin.lib.darwinSystem {
+            inherit system;
+            specialArgs = inputs;
+            modules = [
+              home-manager.darwinModules.home-manager
+              nix-homebrew.darwinModules.nix-homebrew
+              {
                 inherit user;
                 enable = true;
                 taps = {
@@ -96,10 +118,11 @@
                 };
                 mutableTaps = false;
                 autoMigrate = true;
-              };
-            }
-            ./hosts/darwin
-          ];
+              }
+              ./hosts/darwin
+              # ./hosts/profiles/work
+            ];
+          };
         }
       );
 
