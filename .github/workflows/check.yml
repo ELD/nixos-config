@@ -43,6 +43,6 @@ jobs:
               df -h
         - uses: webfactory/ssh-agent@v0.9.0
           with:
-            ssh-private-key: ${{ secrets.GHA_DEPLOY_KEY }}
+            ssh-private-key: ${{ secrets.GHA_DK }}
         - name: Check Nix Flake
           run: nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure
