@@ -81,8 +81,7 @@ with pkgs; [
   # LaTeX/Typesetting
   tectonic
   typst
-  # NOTE: Uncomment when https://github.com/NixOS/nixpkgs/pull/373252 is merged
-  # texliveFull
+  texliveFull
 
   # General utilities
   ascii-image-converter
