@@ -16,6 +16,8 @@ jobs:
       - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.GHA_DEPLOY_KEY }}
+      - name: Check SSH key
+        run: ssh-add -l
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v23
         with:
