@@ -41,9 +41,8 @@ jobs:
               sudo rm -rf "$AGENT_TOOLSDIRECTORY"
               sudo docker image prune --all --force
               df -h
-        - name: Load GHA Key
-          run: |
-            eval `ssh-agent -s`
-            ssh-add - <<< '${{ secrets.GHA_DEPLOY_KEY }}'
+        - uses: webfactory/ssh-agent@v0.9.0
+          with:
+            ssh-private-key: ${{ secrets.GHA_DEPLOY_KEY }}
         - name: Check Nix Flake
           run: nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure
