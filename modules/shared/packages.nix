@@ -56,7 +56,7 @@ with pkgs; [
   # Rust tools
   bacon
   cargo-nextest
-  cargo-expand
+  # cargo-expand
   cargo-outdated
   cargo-shuttle
   cargo-sweep

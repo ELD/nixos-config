@@ -63,7 +63,7 @@ in
     polybar = {
       enable = true;
       config = polybar-config;
-      extraConfig = polybar-bars + polybar-colors + polybar-modules + polybar-user_modules;
+      # extraConfig = polybar-bars + polybar-colors + polybar-modules + polybar-user_modules;
       package = pkgs.polybarFull;
       script = "polybar main &";
     };

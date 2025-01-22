@@ -29,13 +29,6 @@
       nerd-fonts.jetbrains-mono
       nerd-fonts.recursive-mono
       nerd-fonts.monaspace
-      # (nerdfonts.override {
-      #   fonts = [
-      #     "JetBrainsMono"
-      #     "Recursive"
-      #     "Monaspace"
-      #   ];
-      # })
     ];
   };
 }
