@@ -23,7 +23,7 @@ jobs:
           with:
             github-token: ${{ secrets.GHA_PAT }}
         - name: Run the Magic Nix Cache
-          uses: DeterminateSystems/magic-nix-cache-action@v7
+          uses: DeterminateSystems/magic-nix-cache-action@v9
         - name: Free Disk Space (Linux)
           if: matrix.platform.name == 'Linux'
           run: |
