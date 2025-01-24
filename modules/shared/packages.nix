@@ -81,7 +81,7 @@ with pkgs; [
   # LaTeX/Typesetting
   tectonic
   typst
-  texliveFull
+  # texliveFull
 
   # General utilities
   ascii-image-converter
