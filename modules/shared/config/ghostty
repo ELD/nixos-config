@@ -1,4 +1,4 @@
-font-size = 16
+font-size = 18
 font-family = TX-02 Regular
 font-feature = +calt
 font-feature = +liga
@@ -27,3 +27,6 @@ window-padding-color = extend
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
 term = xterm-ghostty
+
+auto-update = download
+auto-update-channel = tip

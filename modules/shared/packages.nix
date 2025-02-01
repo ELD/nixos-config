@@ -98,6 +98,7 @@ with pkgs; [
   gnugrep
   gnused
   jq
+  lazygit
   neofetch
   openssh
   pre-commit
