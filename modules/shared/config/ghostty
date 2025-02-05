@@ -17,7 +17,8 @@ font-feature = +dlig
 # font-feature = +ss11
 # font-feature = +ss12
 
-theme = catppuccin-macchiato
+# theme = catppuccin-macchiato
+theme = oldworld
 
 macos-titlebar-style = tabs
 window-height = 55
