@@ -5,6 +5,7 @@ let name = "Eric Dattore";
     email = "eric@dattore.me";
     fd = lib.getExe pkgs.fd;
     aliases = {
+      cd = "z";
       gst = "git status";
       gap = "git add -p";
       gcia = "git commit --amend --no-edit";
@@ -71,7 +72,10 @@ let name = "Eric Dattore";
     enableZshIntegration = true;
   };
   yt-dlp.enable = true;
-  zoxide.enable = true;
+  zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
 
   # Shared shell configuration
   zsh = {
