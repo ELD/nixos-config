@@ -11,11 +11,9 @@ let user = "edattore"; in
      agenix.darwinModules.default
   ];
 
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
-
   # Setup user, packages, programs
   nix = {
+    enable = false;
     package = pkgs.nix;
     settings = {
       trusted-users = [ "@admin" "${user}" ];
@@ -35,7 +33,6 @@ let user = "edattore"; in
     };
 
     gc = {
-      user = "root";
       automatic = true;
       interval = { Weekday = 0; Hour = 2; Minute = 0; };
       options = "--delete-older-than 30d";
