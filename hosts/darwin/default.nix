@@ -33,7 +33,7 @@ let user = "edattore"; in
     };
 
     gc = {
-      automatic = true;
+      automatic = false;
       interval = { Weekday = 0; Hour = 2; Minute = 0; };
       options = "--delete-older-than 30d";
     };
