@@ -75,7 +75,7 @@ let user = "edattore"; in
   };
 
   security = {
-    pam.enableSudoTouchIdAuth = true;
+    pam.services.sudo_local.touchIdAuth = true;
   };
 
   system = {
