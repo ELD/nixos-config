@@ -32,6 +32,10 @@
       flake = false;
     };
     flake-utils.url = "github:numtide/flake-utils";
+    neovim-nightly-overlay = {
+      url = "github:nix-community/neovim-nightly-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     {
@@ -47,6 +51,7 @@
       agenix,
       secrets,
       flake-utils,
+      neovim-nightly-overlay,
     }@inputs:
     let
       inherit (flake-utils.lib) eachSystemMap;

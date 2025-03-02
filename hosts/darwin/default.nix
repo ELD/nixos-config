@@ -1,4 +1,4 @@
-{ agenix, config, pkgs, ... }:
+{ agenix, config, pkgs, neovim-nightly-overlay, ... }:
 
 let user = "edattore"; in
 

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, neovim-nightly-overlay, ... }:
 
 let name = "Eric Dattore";
     user = "edattore";
@@ -192,6 +192,7 @@ let name = "Eric Dattore";
   };
 
   neovim = {
+    package = neovim-nightly-overlay.packages.${pkgs.system}.default;
     enable = true;
     viAlias = true;
     vimAlias = true;
