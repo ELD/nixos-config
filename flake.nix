@@ -128,6 +128,9 @@
             devShell = self.devShells."${arch}-${os}".default;
           };
         };
+      overlays = [
+        neovim-nightly-overlay.overlays.default
+      ];
     in
     {
       devShells = eachSystemMap defaultSystems devShell;
@@ -152,6 +155,9 @@
           system = "aarch64-darwin";
           specialArgs = inputs;
           modules = [
+            {
+              nixpkgs.overlays = overlays;
+            }
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
@@ -174,6 +180,9 @@
           system = "aarch64-darwin";
           specialArgs = inputs;
           modules = [
+            {
+              nixpkgs.overlays = overlays;
+            }
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
@@ -198,6 +207,9 @@
           system = "x86_64-linux";
           specialArgs = inputs;
           modules = [
+            {
+              nixpkgs.overlays = overlays;
+            }
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             {

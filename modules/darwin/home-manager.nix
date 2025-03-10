@@ -1,4 +1,4 @@
-{ config, pkgs, lib, home-manager, neovim-nightly-overlay, ... }:
+{ config, pkgs, lib, home-manager, ... }:
 
 let
   user = "edattore";
@@ -96,7 +96,7 @@ in
 
         stateVersion = "23.11";
       };
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib neovim-nightly-overlay; };
+      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
 
       # Marked broken Oct 20, 2022 check later to remove this
       # https://github.com/nix-community/home-manager/issues/3344
