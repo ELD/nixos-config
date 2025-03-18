@@ -41,7 +41,7 @@ jobs:
               sudo rm -rf "$AGENT_TOOLSDIRECTORY"
               sudo docker image prune --all --force
               df -h
-        - uses: webfactory/ssh-agent@v0.9.0
+        - uses: webfactory/ssh-agent@v0.9.1
           with:
             ssh-private-key: ${{ secrets.GHA_DK }}
         - name: Check Nix Flake
