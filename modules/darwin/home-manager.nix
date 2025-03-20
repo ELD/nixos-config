@@ -65,7 +65,7 @@ in
       "Final Cut Pro" = 424389933;
 
       "iA Writer" = 775737590;
-      "MindNode" = 1289197285;
+      "MindNode" = 6446116532;
       "UlyssesMac" = 1225570693;
 
       "Xcode" = 497799835;

@@ -21,7 +21,6 @@ with pkgs; [
   comma
   deadnix
   devenv
-  nix
   statix
   yubikey-manager
 
