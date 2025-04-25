@@ -19,7 +19,7 @@ jobs:
         - name: Check Nix flake inputs
           uses: DeterminateSystems/flake-checker-action@v9
         - name: Install Nix
-          uses: DeterminateSystems/nix-installer-action@v16
+          uses: DeterminateSystems/nix-installer-action@v17
           with:
             github-token: ${{ secrets.GHA_PAT }}
         - name: Run the Magic Nix Cache
