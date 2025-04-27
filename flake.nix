@@ -87,6 +87,9 @@
         };
       mkApp = scriptName: system: {
         type = "app";
+        meta = {
+          description = "Apps for managing this Nix system configuration for system, ${system}";
+        };
         program = "${
           (nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
             #!/usr/bin/env bash
