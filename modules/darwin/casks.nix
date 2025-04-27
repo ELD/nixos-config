@@ -34,8 +34,10 @@ _:
   "raycast"
   "rectangle-pro"
   "sigmaos"
+  "sketch"
   "screenflow"
   "sensei"
   "tableplus"
+  "visual-studio-code"
   "zoom"
 ]
