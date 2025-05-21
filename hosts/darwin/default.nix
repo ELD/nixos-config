@@ -1,9 +1,7 @@
 { agenix, config, pkgs, ... }:
 
 let user = "edattore"; in
-
 {
-
   imports = [
     ../../modules/darwin/secrets.nix
     ../../modules/darwin/home-manager.nix
@@ -79,6 +77,7 @@ let user = "edattore"; in
   };
 
   system = {
+    primaryUser = user;
     stateVersion = 4;
 
     defaults = {

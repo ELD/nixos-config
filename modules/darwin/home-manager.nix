@@ -124,6 +124,7 @@ in
   local = {
     dock = {
       enable = true;
+      username = user;
       entries = [
         { path = "/System/Applications/Launchpad.app"; }
         { path = "/Applications/Ghostty.app"; }
