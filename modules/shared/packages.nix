@@ -6,6 +6,7 @@ with pkgs; [
 
   # Chat tools
   # gomuks # NOTE: Broken because of a cryptographic dep
+  iamb
 
   # Encryption/decryption tools
   age
@@ -80,7 +81,7 @@ with pkgs; [
   # LaTeX/Typesetting
   tectonic
   typst
-  # texliveFull
+  texliveFull
 
   # General utilities
   ascii-image-converter
@@ -90,6 +91,7 @@ with pkgs; [
   devenv
   du-dust
   fd
+  ffmpeg
   findutils
   fontforge
   gawk
@@ -107,6 +109,7 @@ with pkgs; [
   tealdeer
   tree
   treefmt
+  tree-sitter
   unzip
   wget
   yt-dlp
