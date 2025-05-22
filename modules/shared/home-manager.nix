@@ -95,7 +95,7 @@ let name = "Eric Dattore";
       PAGER = "bat";
     };
     shellAliases = aliases;
-    initExtra = ''
+    initContent = ''
       ${functions}
       ${atuinZshExtras}
       # if [[ -f "$HOME/.config/zsh/.p10k.zsh" ]]; then

@@ -21,11 +21,11 @@ shift 1
 export NIXPKGS_ALLOW_UNFREE=1
 
 echo "${YELLOW}Starting build...${NC}"
-echo "nix --extra-experimental-features 'nix-command flakes' build .#$FLAKE_SYSTEM $@"
+# echo "nix --extra-experimental-features 'nix-command flakes' build .#$FLAKE_SYSTEM $@"
 nix --extra-experimental-features 'nix-command flakes' build .#$FLAKE_SYSTEM $@
 
 echo "${YELLOW}Switching to new generation...${NC}"
-./result/sw/bin/darwin-rebuild switch --flake .#${HOST} $@
+sudo ./result/sw/bin/darwin-rebuild switch --flake .#${HOST} $@
 
 echo "${YELLOW}Cleaning up...${NC}"
 unlink ./result
