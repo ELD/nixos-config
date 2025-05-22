@@ -18,10 +18,12 @@ jobs:
             submodules: recursive
         - name: Check Nix flake inputs
           uses: DeterminateSystems/flake-checker-action@v9
-        - name: Install Nix
-          uses: DeterminateSystems/nix-installer-action@v17
+        - name: Install Determinate Nix with lazy trees enabled
+          uses: DeterminateSystems/determinate-nix-action@v3
           with:
-            github-token: ${{ secrets.GHA_PAT }}
+            github-token: ${{ secrets.GITHUB_PATH }}
+            extra-conf:
+              lazy-trees = true
         - name: Use FlakeHub Cache
           uses: DeterminateSystems/flakehub-cache-action@main
         - name: Free Disk Space (Linux)
