@@ -17,7 +17,7 @@ jobs:
           with:
             submodules: recursive
         - name: Check Nix flake inputs
-          uses: DeterminateSystems/flake-checker-action@v9
+          uses: DeterminateSystems/flake-checker-action@v10
         - name: Install Determinate Nix with lazy trees enabled
           uses: DeterminateSystems/determinate-nix-action@v3
           with:
