@@ -5,7 +5,7 @@ with pkgs; [
   nixfmt-rfc-style
 
   # Chat tools
-  # gomuks # NOTE: Broken because of a cryptographic dep
+  gomuks
   iamb
 
   # Encryption/decryption tools
