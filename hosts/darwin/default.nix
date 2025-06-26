@@ -65,6 +65,10 @@ let user = "edattore"; in
     computerName = "Rhodium";
     hostName = "Rhodium";
     localHostName = "Rhodium";
+    applicationFirewall = {
+      enable = true;
+      enableStealthMode = true;
+    };
   };
 
   programs.gnupg = {
@@ -124,12 +128,6 @@ let user = "edattore"; in
         ActuationStrength = 1;
         FirstClickThreshold = 1;
         TrackpadRightClick = true;
-      };
-
-      alf = {
-        globalstate = 1;
-        loggingenabled = 0;
-        stealthenabled = 1;
       };
     };
   };
