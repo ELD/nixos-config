@@ -18,7 +18,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GHA_DK }}
       - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v25
+        uses: DeterminateSystems/update-flake-lock@v26
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           pr-title: "Update flake.lock"
