@@ -50,6 +50,7 @@ with pkgs; [
   cirrus-cli
   doctl
   flyctl
+  gh
   terraform
   turso-cli
 
