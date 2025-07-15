@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v18
+        uses: DeterminateSystems/nix-installer-action@v19
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup SSH Key
