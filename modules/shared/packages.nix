@@ -36,7 +36,7 @@ with pkgs; [
   templ
 
   # Java tools
-  jdk11
+  jdk
 
   # Lua
   luajit
@@ -46,8 +46,6 @@ with pkgs; [
   colima
 
   # CI/CD and Cloud
-  circleci-cli
-  cirrus-cli
   doctl
   flyctl
   gh
@@ -57,11 +55,11 @@ with pkgs; [
   # Rust tools
   bacon
   cargo-nextest
-  # cargo-expand
+  cargo-expand
   cargo-outdated
   cargo-shuttle
   cargo-sweep
-  # cargo-vet
+  cargo-vet
   cargo-wipe
   diesel-cli
   evcxr
@@ -83,6 +81,12 @@ with pkgs; [
   tectonic
   typst
   texliveFull
+
+  # AI tools
+  opencode
+
+  # Zig
+  zigpkgs.master
 
   # General utilities
   ascii-image-converter
@@ -108,6 +112,7 @@ with pkgs; [
   ripgrep
   ripgrep-all
   tealdeer
+  tmux
   tree
   treefmt
   tree-sitter
@@ -115,4 +120,5 @@ with pkgs; [
   wget
   yt-dlp
   yq
+  zellij
 ]

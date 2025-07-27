@@ -36,6 +36,9 @@
       url = "github:nix-community/neovim-nightly-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zig = {
+      url = "github:mitchellh/zig-overlay";
+    };
   };
   outputs =
     {
@@ -52,6 +55,7 @@
       secrets,
       flake-utils,
       neovim-nightly-overlay,
+      zig,
     }@inputs:
     let
       inherit (flake-utils.lib) eachSystemMap;
@@ -133,6 +137,9 @@
         };
       overlays = [
         neovim-nightly-overlay.overlays.default
+        (final: prev: {
+          zigpkgs = zig.packages.${prev.system};
+        })
       ];
     in
     {
