@@ -107,7 +107,7 @@ in
         nvim = {
           source =
             config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/edattore"
-              "modules/shared/config/spartanvim");
+              "modules/shared/config/sigmavim");
           recursive = true;
         };
         "ghostty/config" = {
@@ -128,6 +128,7 @@ in
       entries = [
         { path = "/System/Applications/Launchpad.app"; }
         { path = "/Applications/Ghostty.app"; }
+        { path = "/Applications/Dia.app/"; }
         { path = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/"; }
         { path = "/System/Applications/Messages.app"; }
         { path = "/System/Applications/Mail.app"; }
