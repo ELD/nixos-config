@@ -120,6 +120,9 @@ in
               "modules/shared/config/ghostty");
           recursive = true;
         };
+        "starship.toml" = {
+          source = ../shared/config/starship.toml;
+        };
       };
     };
   };
