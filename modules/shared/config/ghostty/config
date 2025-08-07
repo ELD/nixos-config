@@ -1,0 +1,42 @@
+# font-size = 20
+# font-family = TX-02 Regular
+# font-feature = +calt
+# font-feature = +liga
+# font-feature = +dlig
+
+font-size = 18
+font-family = OperatorMonoSSmLig Nerd Font
+font-feature = +calt
+font-feature = +dlig
+font-feature = +liga
+font-feature = +ss01
+font-feature = +ss03
+font-feature = +ss05
+font-feature = +ss08
+font-feature = +ss09
+font-feature = +ss10
+font-feature = +ss11
+font-feature = +ss12
+
+# adjust-cell-height = 40%
+
+theme = catppuccin-macchiato
+# theme = oldworld
+# theme = vague
+
+custom-shader = ghostty-shaders/cursor_blaze.glsl
+
+macos-titlebar-style = tabs
+window-height = 55
+window-width = 186
+window-padding-color = extend
+
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+term = xterm-ghostty
+
+auto-update = download
+auto-update-channel = tip
+
+window-save-state = always
+

@@ -1,3 +1,6 @@
 [submodule "modules/shared/config/sigmavim"]
 	path = modules/shared/config/sigmavim
 	url = git@github.com:ELD/sigmavim.git
+[submodule "modules/shared/config/ghostty/ghostty-shaders"]
+	path = modules/shared/config/ghostty/ghostty-shaders
+	url = git@github.com:hackr-sh/ghostty-shaders.git

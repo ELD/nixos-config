@@ -94,6 +94,10 @@ in
           additionalFiles
         ];
 
+        sessionPath = [
+          "/Users/${user}/.cargo/bin"
+        ];
+
         stateVersion = "23.11";
       };
       programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
@@ -106,15 +110,15 @@ in
       {
         nvim = {
           source =
-            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/edattore"
+            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/${user}"
               "modules/shared/config/sigmavim");
           recursive = true;
         };
-        "ghostty/config" = {
-          source = ../shared/config/ghostty;
-        };
-        "zsh/.p10k.zsh" = {
-          source = ../shared/config/p10k.zsh;
+        ghostty = {
+          source =
+            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/${user}"
+              "modules/shared/config/ghostty");
+          recursive = true;
         };
       };
     };

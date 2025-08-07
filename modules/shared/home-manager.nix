@@ -28,6 +28,9 @@ let name = "Eric Dattore";
     enable = true;
     enableZshIntegration = true;
   };
+  bacon = {
+    enable = true;
+  };
   bat = {
     enable = true;
     config = {
@@ -82,7 +85,7 @@ let name = "Eric Dattore";
     enable = true;
     autocd = true;
     cdpath = [ "~/.local/share/src" ];
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     localVariables = {
       LANG = "en_US.UTF-8";
       GPG_TTY = "/dev/ttys000";
@@ -98,9 +101,6 @@ let name = "Eric Dattore";
     initContent = ''
       ${functions}
       ${atuinZshExtras}
-      # if [[ -f "$HOME/.config/zsh/.p10k.zsh" ]]; then
-      #   source "$HOME/.config/zsh/.p10k.zsh"
-      # fi
     '';
 
     prezto = {
