@@ -107,12 +107,15 @@ with pkgs; [
   lazygit
   neofetch
   openssh
+  openssl
+  pkg-config
   pre-commit
   ranger
   ripgrep
   ripgrep-all
   tealdeer
   tmux
+  tokei
   tree
   treefmt
   tree-sitter
