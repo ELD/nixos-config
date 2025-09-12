@@ -68,7 +68,7 @@ with pkgs; [
   sccache
 
   # Python tools
-  python3Full
+  python3
   python3Packages.pip
   python3Packages.jupyter_core
   python3Packages.ipython

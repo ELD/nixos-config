@@ -1,28 +1,28 @@
 font-size = 20
 
-font-family = TX-02 Regular
-font-feature = +calt
-font-feature = +liga
-font-feature = +dlig
-
-# font-family = OperatorMonoSSmLig Nerd Font
+# font-family = TX-02 Regular
 # font-feature = +calt
-# font-feature = +dlig
 # font-feature = +liga
-# font-feature = +ss01
-# font-feature = +ss03
-# font-feature = +ss05
-# font-feature = +ss08
-# font-feature = +ss09
-# font-feature = +ss10
-# font-feature = +ss11
-# font-feature = +ss12
+# font-feature = +dlig
+
+font-family = OperatorMonoSSmLig Nerd Font Medium
+font-feature = +calt
+font-feature = +dlig
+font-feature = +liga
+font-feature = +ss01
+font-feature = +ss03
+font-feature = +ss05
+font-feature = +ss08
+font-feature = +ss09
+font-feature = +ss10
+font-feature = +ss11
+font-feature = +ss12
 
 # adjust-cell-height = 40%
 
-theme = catppuccin-macchiato
+# theme = catppuccin-macchiato
 # theme = oldworld
-# theme = vague
+theme = vague
 
 custom-shader = ghostty-shaders/cursor_blaze.glsl
 
