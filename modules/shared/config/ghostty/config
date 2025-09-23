@@ -36,7 +36,7 @@ keybind = global:ctrl+grave_accent=toggle_quick_terminal
 term = xterm-ghostty
 
 auto-update = download
-auto-update-channel = tip
+auto-update-channel = stable
 
 window-save-state = always
 
