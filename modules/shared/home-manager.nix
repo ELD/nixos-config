@@ -64,8 +64,10 @@ let name = "Eric Dattore";
   };
   go = {
     enable = true;
-    goPath = "workspace/go";
-    goBin = "workspace/go/bin";
+    env = {
+      goPath = "workspace/go";
+      goBin = "workspace/go/bin";
+    };
   };
   htop.enable = true;
   jq.enable = true;
@@ -160,7 +162,9 @@ let name = "Eric Dattore";
     };
     difftastic = {
       enable = true;
-      display = "inline";
+      options = {
+        display = "inline";
+      };
     };
     extraConfig = {
       init.defaultBranch = "main";
@@ -205,7 +209,12 @@ let name = "Eric Dattore";
 
   ssh = {
     enable = true;
-    forwardAgent = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      "*" = {
+        forwardAgent = true;
+      };
+    };
     includes = [
       (lib.mkIf pkgs.stdenv.hostPlatform.isLinux
         "/home/${user}/.ssh/config_external"
