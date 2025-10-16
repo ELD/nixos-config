@@ -135,7 +135,7 @@ in
       enable = true;
       username = user;
       entries = [
-        { path = "/System/Applications/Launchpad.app"; }
+        { path = "/System/Applications/Apps.app"; }
         { path = "/Applications/Ghostty.app"; }
         { path = "/Applications/Dia.app/"; }
         { path = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/"; }
