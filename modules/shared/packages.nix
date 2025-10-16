@@ -105,6 +105,7 @@ with pkgs; [
   gnused
   jq
   lazygit
+  lazysql
   neofetch
   openssh
   openssl
