@@ -1,6 +1,7 @@
-font-size = 20
+font-size = 16
 
-font-family = TX-02 Regular
+font-family = Berkeley Mono Variable
+
 font-feature = +calt
 font-feature = +liga
 font-feature = +dlig
@@ -22,7 +23,8 @@ font-feature = +dlig
 
 # theme = catppuccin-macchiato
 # theme = oldworld
-theme = vague
+# theme = vague
+theme = nightingale
 
 custom-shader = ghostty-shaders/cursor_blaze.glsl
 
