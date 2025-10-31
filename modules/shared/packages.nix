@@ -70,7 +70,7 @@ with pkgs; [
   # Python tools
   python3
   python3Packages.pip
-  python3Packages.jupyter_core
+  python3Packages.jupyter-core
   python3Packages.ipython
   python3Packages.ipykernel
   python3Packages.fonttools
@@ -94,7 +94,7 @@ with pkgs; [
   coreutils-full
   curl
   devenv
-  du-dust
+  dust
   fd
   ffmpeg
   findutils
