@@ -4,6 +4,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     agenix.url = "github:ryantm/agenix";
     home-manager.url = "github:nix-community/home-manager";
+    # home-manager = {
+    #   url = "github:aguirre-matteo/home-manager/fix-home-uid";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -106,6 +110,7 @@
       mkLinuxApps = system: {
         "apply" = mkApp "apply" system;
         "build-switch" = mkApp "build-switch" system;
+        "clean" = mkApp "clean" system;
         "copy-keys" = mkApp "copy-keys" system;
         "create-keys" = mkApp "create-keys" system;
         "check-keys" = mkApp "check-keys" system;
@@ -116,6 +121,7 @@
         "apply" = mkApp "apply" system;
         "build" = mkApp "build" system;
         "build-switch" = mkApp "build-switch" system;
+        "clean" = mkApp "clean" system;
         "copy-keys" = mkApp "copy-keys" system;
         "create-keys" = mkApp "create-keys" system;
         "check-keys" = mkApp "check-keys" system;

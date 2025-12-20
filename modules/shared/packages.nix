@@ -27,7 +27,8 @@ with pkgs; [
 
   # JavaScript tools
   bun
-  nodejs_latest
+  # NOTE: Let's only use Bun instead of installing Node since it's better
+  # nodejs_latest
   nodePackages.pnpm
   yarn
 
@@ -106,6 +107,7 @@ with pkgs; [
   jq
   lazygit
   lazysql
+  mdcat
   neofetch
   openssh
   openssl
@@ -119,7 +121,7 @@ with pkgs; [
   tokei
   tree
   treefmt
-  tree-sitter
+  # tree-sitter
   unzip
   wget
   yt-dlp

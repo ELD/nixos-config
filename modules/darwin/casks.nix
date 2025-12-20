@@ -26,6 +26,7 @@ _:
   "lunar"
   "macfuse"
   "monodraw"
+  "nook"
   "numi"
   "obs"
   "obsidian"

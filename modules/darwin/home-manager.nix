@@ -22,6 +22,7 @@ in
 
   homebrew = {
     enable = true;
+    # brews = [ "opencode" ];
     casks = pkgs.callPackage ./casks.nix {};
     onActivation = {
       autoUpdate = true;
@@ -66,7 +67,7 @@ in
 
       "iA Writer" = 775737590;
       "MindNode" = 6446116532;
-      "UlyssesMac" = 1225570693;
+      "Ulysses" = 1225570693;
 
       "Xcode" = 497799835;
 

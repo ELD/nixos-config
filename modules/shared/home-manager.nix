@@ -111,6 +111,9 @@ in
       ${functions}
       ${atuinZshExtras}
     '';
+    setOptions = [
+      "NO_NOMATCH"
+    ];
 
     prezto = {
       enable = true;
@@ -238,6 +241,8 @@ in
     matchBlocks = {
       "*" = {
         forwardAgent = true;
+        sendEnv = [ "LANG" "LC_*" ];
+        hashKnownHosts = true;
       };
     };
     includes = [
