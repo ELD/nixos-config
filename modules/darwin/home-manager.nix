@@ -138,7 +138,6 @@ in
       entries = [
         { path = "/System/Applications/Apps.app"; }
         { path = "/Applications/Ghostty.app"; }
-        { path = "/Applications/Dia.app/"; }
         { path = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/"; }
         { path = "/System/Applications/Messages.app"; }
         { path = "/System/Applications/Mail.app"; }
