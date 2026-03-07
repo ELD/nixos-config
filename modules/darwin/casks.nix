@@ -25,6 +25,7 @@ _:
   "lm-studio"
   "lunar"
   "macfuse"
+  "markedit"
   "monodraw"
   "nook"
   "numi"

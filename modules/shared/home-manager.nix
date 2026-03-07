@@ -108,6 +108,7 @@ in
     };
     shellAliases = aliases;
     initContent = ''
+      ulimit -n 2048
       ${functions}
       ${atuinZshExtras}
     '';

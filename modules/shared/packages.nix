@@ -96,6 +96,7 @@ with pkgs; [
   curl
   devenv
   dust
+  fastfetch
   fd
   ffmpeg
   findutils
@@ -108,7 +109,6 @@ with pkgs; [
   lazygit
   lazysql
   mdcat
-  neofetch
   openssh
   openssl
   pkg-config
@@ -121,7 +121,7 @@ with pkgs; [
   tokei
   tree
   treefmt
-  # tree-sitter
+  tree-sitter
   unzip
   wget
   yt-dlp
