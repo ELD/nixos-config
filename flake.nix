@@ -185,7 +185,6 @@
                   "homebrew/homebrew-bundle" = homebrew-bundle;
                 };
                 mutableTaps = false;
-                autoMigrate = true;
               };
             }
             ./hosts/darwin
@@ -209,7 +208,6 @@
                 "homebrew/homebrew-bundle" = homebrew-bundle;
               };
               mutableTaps = false;
-              autoMigrate = true;
             }
             ./hosts/darwin
             # ./hosts/profiles/work
