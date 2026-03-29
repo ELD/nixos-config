@@ -2,11 +2,11 @@
 
 with pkgs; [
   # Formatters and LSP tools
-  nixfmt-rfc-style
+  nixfmt
 
   # Chat tools
   gomuks
-  iamb
+  # iamb
 
   # Encryption/decryption tools
   age

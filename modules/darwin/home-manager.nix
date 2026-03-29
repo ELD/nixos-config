@@ -101,7 +101,7 @@ in
           "/Users/${user}/.cargo/bin"
         ];
 
-        stateVersion = "23.11";
+        stateVersion = "25.11";
       };
       programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
 

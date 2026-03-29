@@ -19,15 +19,16 @@ let user = "edattore"; in
         "https://nix-community.cachix.org?priority=40"
         "https://cache.nixos.org?priority=41"
         "https://numtide.cachix.org?priority=42"
-        "https://edattore-attic-nix-binary-cache.fly.dev/system?priority=43"
+        "https://edattore-attic-nix-cache.fly.dev/system?priority=43"
       ];
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
-        "system:9kc0wfN/u1hwyuvVf34YvpWGutSlLpjMeH8ovjOEJm8="
+        "system:Wo7aVOWLvzHiLUduSG2s8B8l8fXVDc36x6AjzrgbMvc="
       ];
       max-jobs = "auto";
+      netrc-file = "$HOME/.netrc";
     };
 
     gc = {
@@ -35,7 +36,6 @@ let user = "edattore"; in
       interval = { Weekday = 0; Hour = 2; Minute = 0; };
       options = "--delete-older-than 30d";
     };
-
 
     extraOptions = ''
       netrc-file = /nix/var/determinate/netrc

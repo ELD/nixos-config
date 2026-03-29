@@ -287,5 +287,5 @@ let user = "edattore";
     inetutils
   ];
 
-  system.stateVersion = "21.05"; # Don't change this
+  system.stateVersion = "25.11"; # Don't change this
 }
