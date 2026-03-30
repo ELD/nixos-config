@@ -21,7 +21,7 @@ shared-packages ++ [
 
   # Productivity tools
   bc # old school calculator
-  galculator
+  # galculator
 
   # Audio tools
   cava # Terminal audio visualizer
