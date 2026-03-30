@@ -1,12 +1,19 @@
-{ config, inputs, pkgs, agenix, ... }:
+{
+  config,
+  inputs,
+  pkgs,
+  agenix,
+  ...
+}:
 
-let user = "edattore";
-    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
+let
+  user = "edattore";
+  keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ];
+in
 {
   imports = [
     ../../modules/nixos/secrets.nix
     ../../modules/nixos/disk-config.nix
-    ../../modules/shared
     agenix.nixosModules.default
   ];
 
@@ -19,7 +26,14 @@ let user = "edattore";
       };
       efi.canTouchEfiVariables = true;
     };
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+    initrd.availableKernelModules = [
+      "xhci_pci"
+      "ahci"
+      "nvme"
+      "usbhid"
+      "usb_storage"
+      "sd_mod"
+    ];
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
@@ -42,8 +56,14 @@ let user = "edattore";
     nixPath = [ "nixos-config=/home/${user}/.local/share/src/nixos-config:/etc/nixos" ];
     settings = {
       allowed-users = [ "${user}" ];
-      trusted-users = [ "@admin" "${user}" ];
-      substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
+      trusted-users = [
+        "@admin"
+        "${user}"
+      ];
+      substituters = [
+        "https://nix-community.cachix.org"
+        "https://cache.nixos.org"
+      ];
       trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
     };
 
@@ -119,7 +139,7 @@ let user = "edattore";
       overrideDevices = true;
 
       settings = {
-        devices = {};
+        devices = { };
         options.globalAnnounceEnabled = false; # Only sync on LAN
       };
     };
@@ -153,8 +173,8 @@ let user = "edattore";
           "class_g = 'i3lock'"
         ];
         round-borders = 3;
-        round-borders-exclude = [];
-        round-borders-rule = [];
+        round-borders-exclude = [ ];
+        round-borders-rule = [ ];
         shadow = true;
         shadow-radius = 8;
         shadow-opacity = 0.4;
@@ -205,12 +225,29 @@ let user = "edattore";
         log-level = "info";
 
         wintypes = {
-          normal = { fade = true; shadow = false; };
-          tooltip = { fade = true; shadow = false; opacity = 0.75; focus = true; full-shadow = false; };
-          dock = { shadow = false; };
-          dnd = { shadow = false; };
-          popup_menu = { opacity = 1.0; };
-          dropdown_menu = { opacity = 1.0; };
+          normal = {
+            fade = true;
+            shadow = false;
+          };
+          tooltip = {
+            fade = true;
+            shadow = false;
+            opacity = 0.75;
+            focus = true;
+            full-shadow = false;
+          };
+          dock = {
+            shadow = false;
+          };
+          dnd = {
+            shadow = false;
+          };
+          popup_menu = {
+            opacity = 1.0;
+          };
+          dropdown_menu = {
+            opacity = 1.0;
+          };
         };
       };
     };
@@ -239,8 +276,7 @@ let user = "edattore";
     ledger.enable = true;
   };
 
-
- # Add docker daemon
+  # Add docker daemon
   virtualisation.docker.enable = true;
   virtualisation.docker.logDriver = "json-file";
 
@@ -264,15 +300,17 @@ let user = "edattore";
   # Don't require password for users in `wheel` group for these commands
   security.sudo = {
     enable = true;
-    extraRules = [{
-      commands = [
-       {
-         command = "${pkgs.systemd}/bin/reboot";
-         options = [ "NOPASSWD" ];
-        }
-      ];
-      groups = [ "wheel" ];
-    }];
+    extraRules = [
+      {
+        commands = [
+          {
+            command = "${pkgs.systemd}/bin/reboot";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+        groups = [ "wheel" ];
+      }
+    ];
   };
 
   fonts.packages = with pkgs; [

@@ -141,12 +141,7 @@
             devShell = self.devShells."${arch}-${os}".default;
           };
         };
-      overlays = [
-        neovim-nightly-overlay.overlays.default
-        (final: prev: {
-          zigpkgs = zig.packages.${prev.system};
-        })
-      ];
+      overlays = import ./overlays (inputs // { inherit inputs; });
     in
     {
       devShells = eachSystemMap defaultSystems devShell;
@@ -168,11 +163,14 @@
       darwinConfigurations = {
         "rhodium@aarch64-darwin" = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit inputs;
+          };
           modules = [
             {
               nixpkgs.overlays = overlays;
             }
+            ./modules/shared
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
@@ -185,6 +183,7 @@
                   "homebrew/homebrew-bundle" = homebrew-bundle;
                 };
                 mutableTaps = false;
+                autoMigrate = true;
               };
             }
             ./hosts/darwin
@@ -192,22 +191,28 @@
         };
         "eric.dattore-mac@aarch64-darwin" = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit inputs;
+          };
           modules = [
             {
               nixpkgs.overlays = overlays;
             }
+            ./modules/shared
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
-              inherit user;
-              enable = true;
-              taps = {
-                "homebrew/homebrew-core" = homebrew-core;
-                "homebrew/homebrew-cask" = homebrew-cask;
-                "homebrew/homebrew-bundle" = homebrew-bundle;
+              nix-homebrew = {
+                inherit user;
+                enable = true;
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                };
+                mutableTaps = false;
+                autoMigrate = true;
               };
-              mutableTaps = false;
             }
             ./hosts/darwin
             # ./hosts/profiles/work
@@ -218,11 +223,14 @@
       nixosConfigurations = {
         "indium@x86_64-linux" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = inputs;
+          specialArgs = inputs // {
+            inherit inputs;
+          };
           modules = [
             {
               nixpkgs.overlays = overlays;
             }
+            ./modules/shared
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             {

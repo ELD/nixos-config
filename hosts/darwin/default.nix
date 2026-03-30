@@ -1,12 +1,18 @@
-{ agenix, config, pkgs, ... }:
+{
+  agenix,
+  config,
+  pkgs,
+  ...
+}:
 
-let user = "edattore"; in
+let
+  user = "edattore";
+in
 {
   imports = [
     ../../modules/darwin/secrets.nix
     ../../modules/darwin/home-manager.nix
-    ../../modules/shared
-     agenix.darwinModules.default
+    agenix.darwinModules.default
   ];
 
   # Setup user, packages, programs
@@ -14,7 +20,10 @@ let user = "edattore"; in
     enable = false;
     package = pkgs.nix;
     settings = {
-      trusted-users = [ "@admin" "${user}" ];
+      trusted-users = [
+        "@admin"
+        "${user}"
+      ];
       substituters = [
         "https://nix-community.cachix.org?priority=40"
         "https://cache.nixos.org?priority=41"
@@ -33,7 +42,11 @@ let user = "edattore"; in
 
     gc = {
       automatic = false;
-      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+      interval = {
+        Weekday = 0;
+        Hour = 2;
+        Minute = 0;
+      };
       options = "--delete-older-than 30d";
     };
 
@@ -56,10 +69,13 @@ let user = "edattore"; in
   system.checks.verifyNixPath = false;
 
   # Load configuration that is shared across systems
-  environment.systemPackages = with pkgs; [
-    agenix.packages."${pkgs.system}".default
-    age-plugin-yubikey
-  ] ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
+  environment.systemPackages =
+    with pkgs;
+    [
+      agenix.packages."${pkgs.system}".default
+      age-plugin-yubikey
+    ]
+    ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
 
   networking = {
     computerName = "Rhodium";
