@@ -29,7 +29,7 @@ with pkgs; [
   bun
   # NOTE: Let's only use Bun instead of installing Node since it's better
   # nodejs_latest
-  nodePackages.pnpm
+  pnpm
   yarn
 
   # Golang tools
