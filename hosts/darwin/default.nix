@@ -25,16 +25,16 @@ in
         "${user}"
       ];
       substituters = [
-        "https://nix-community.cachix.org?priority=40"
-        "https://cache.nixos.org?priority=41"
+        "https://nix-community.cachix.org?priority=41"
         "https://numtide.cachix.org?priority=42"
         "https://edattore-attic-nix-cache.fly.dev/system?priority=43"
+        "https://cache.nixos.org?priority=44"
       ];
       trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
         "system:Wo7aVOWLvzHiLUduSG2s8B8l8fXVDc36x6AjzrgbMvc="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
       max-jobs = "auto";
       netrc-file = "$HOME/.netrc";
