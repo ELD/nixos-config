@@ -6,7 +6,7 @@ with pkgs; [
 
   # Chat tools
   gomuks
-  # iamb
+  iamb
 
   # Encryption/decryption tools
   age

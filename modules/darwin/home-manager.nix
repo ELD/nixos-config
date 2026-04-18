@@ -47,41 +47,46 @@ in
     # This message is safe to ignore. (https://github.com/dustinlyons/nixos-config/issues/83)
 
     masApps = {
+      # Utilities
       "1Blocker" = 1365531024;
       "1Password for Safari" = 1569813296;
       "Cardhop" = 1290358394;
-      "Fantastical" = 975937182;
+      "Flighty" = 1358823008;
+      "one sec" = 1532875441;
       "Pile" = 1549454338;
-      "Pixelmator Pro" = 1289583905;
-      "Slack" = 803453959;
-      "Things 3" = 904280696;
-
-      "Pages" = 409201541;
-      "Keynote" = 409203825;
-      "Numbers" = 409183694;
-
-      "MainStage 3" = 634159523;
-      "Logic Pro X" = 634148309;
-
-      "Final Cut Pro" = 424389933;
-
-      "iA Writer" = 775737590;
-      "MindNode" = 6446116532;
-      "Ulysses" = 1225570693;
-
-      "Xcode" = 497799835;
-
-      "Day Progress" = 6450280202;
-      # "Structured" = 1499198946;
-
+      "StopTheMadness Pro" = 6471380298;
+      "Tailscale" = 1475387142;
       "TestFlight" = 899247664;
 
-      "Flighty" = 1358823008;
+      # Code
+      "Xcode" = 497799835;
+
+      # Writing
+      "iA Writer" = 775737590;
+      "Ulysses" = 1225570693;
+
+      # Creative
+      "Compressor" = 6746516157;
+      "Final Cut Pro" = 1631624924;
+      "GarageBand" = 682658836;
       "Kindle" = 302584613;
+      "Logic Pro" = 1615087040;
+      "MainStage" = 6746637089;
+      "Motion" = 6746637149;
+      "Pixelmator Pro" = 6746662575;
 
-      "Balatro+" = 6502451661;
+      # Games
+      "Balatro" = 6502451661;
+      "CivilizationVII" = 6744373452;
 
-      "Tailscale" = 1475387142;
+      # Productivity
+      "Fantastical" = 975937182;
+      "Keynote" = 361285480;
+      "Numbers" = 361304891;
+      "Pages" = 361309726;
+      "Slack" = 803453959;
+      # "Structured" = 0;
+      "Things" = 904280696;
     };
   };
 
