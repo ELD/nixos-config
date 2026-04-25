@@ -13,9 +13,9 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@v22
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Patch GitHub paths
-        run: |
-          git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com".insteadOf https://github.com
+      - uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.GHA_DK }}
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.10.0
         with:
