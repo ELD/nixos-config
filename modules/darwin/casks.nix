@@ -9,6 +9,7 @@ _:
   "bartender"
   "bettertouchtool"
   "chatgpt"
+  "cmux"
   "daisydisk"
   "dash"
   "deckset"

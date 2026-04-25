@@ -2,7 +2,7 @@
   config,
   inputs,
   pkgs,
-  agenix,
+  sops-nix,
   ...
 }:
 
@@ -14,7 +14,7 @@ in
   imports = [
     ../../modules/nixos/secrets.nix
     ../../modules/nixos/disk-config.nix
-    agenix.nixosModules.default
+    sops-nix.nixosModules.sops
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -319,8 +319,7 @@ in
   ];
 
   environment.systemPackages = with pkgs; [
-    agenix.packages."${pkgs.system}".default # "x86_64-linux"
-    age-plugin-yubikey
+    sops
     gitFull
     inetutils
   ];

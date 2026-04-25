@@ -1,6 +1,7 @@
 { pkgs }:
 
-with pkgs; [
+with pkgs;
+[
   # Formatters and LSP tools
   nixfmt
 
@@ -10,8 +11,8 @@ with pkgs; [
 
   # Encryption/decryption tools
   age
-  age-plugin-yubikey
   gnupg
+  sops
 
   # Go dev tools
   air

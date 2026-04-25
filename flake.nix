@@ -2,7 +2,10 @@
   description = "Starter Configuration with secrets for MacOS and NixOS";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    agenix.url = "github:ryantm/agenix";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager.url = "github:nix-community/home-manager";
     # home-manager = {
     #   url = "github:aguirre-matteo/home-manager/fix-home-uid";
@@ -13,8 +16,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
+      url = "github:Azd325/nix-homebrew";
     };
+    # nix-homebrew = {
+    #   url = "github:zhaofengli/nix-homebrew";
+    # };
     homebrew-bundle = {
       url = "github:homebrew/homebrew-bundle";
       flake = false;
@@ -43,6 +49,7 @@
     zig = {
       url = "github:mitchellh/zig-overlay";
     };
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
   outputs =
     {
@@ -55,11 +62,12 @@
       home-manager,
       nixpkgs,
       disko,
-      agenix,
+      sops-nix,
       secrets,
       flake-utils,
       neovim-nightly-overlay,
       zig,
+      llm-agents,
     }@inputs:
     let
       inherit (flake-utils.lib) eachSystemMap;
@@ -86,7 +94,7 @@
                 bashInteractive
                 git
                 age
-                age-plugin-yubikey
+                sops
               ];
               shellHook = ''
                 export EDITOR=vim
@@ -111,20 +119,12 @@
         "apply" = mkApp "apply" system;
         "build-switch" = mkApp "build-switch" system;
         "clean" = mkApp "clean" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "install" = mkApp "install" system;
-        "install-with-secrets" = mkApp "install-with-secrets" system;
       };
       mkDarwinApps = system: {
         "apply" = mkApp "apply" system;
         "build" = mkApp "build" system;
         "build-switch" = mkApp "build-switch" system;
         "clean" = mkApp "clean" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
         "rollback" = mkApp "rollback" system;
       };
       mkChecks =

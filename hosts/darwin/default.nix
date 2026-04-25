@@ -1,5 +1,5 @@
 {
-  agenix,
+  sops-nix,
   config,
   pkgs,
   ...
@@ -12,7 +12,7 @@ in
   imports = [
     ../../modules/darwin/secrets.nix
     ../../modules/darwin/home-manager.nix
-    agenix.darwinModules.default
+    sops-nix.darwinModules.sops
   ];
 
   # Setup user, packages, programs
@@ -69,13 +69,7 @@ in
   system.checks.verifyNixPath = false;
 
   # Load configuration that is shared across systems
-  environment.systemPackages =
-    with pkgs;
-    [
-      agenix.packages."${pkgs.system}".default
-      age-plugin-yubikey
-    ]
-    ++ (import ../../modules/shared/packages.nix { inherit pkgs; });
+  environment.systemPackages = with pkgs; import ../../modules/shared/packages.nix { inherit pkgs; };
 
   networking = {
     computerName = "Rhodium";
