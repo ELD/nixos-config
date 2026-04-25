@@ -7,5 +7,3 @@ function remove_keygrips() {
 
   gpg --card-status
 }
-
-complete -o default -F remove_keygrips

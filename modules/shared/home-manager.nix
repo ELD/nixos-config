@@ -16,7 +16,7 @@ let
     gap = "git add -p";
     gcia = "git commit --amend --no-edit";
     npm = "pnpm";
-    npx = "pnmp dlx";
+    npx = "pnpm dlx";
   };
   atuinZshExtras =
     if config.programs.atuin.enable then
@@ -97,7 +97,6 @@ in
     dotDir = "${config.xdg.configHome}/zsh";
     localVariables = {
       LANG = "en_US.UTF-8";
-      GPG_TTY = "/dev/ttys000";
       DEFAULT_USER = "${config.home.username}";
       CLICOLOR = 1;
       LS_COLORS = "ExFxBxDxCxegedabagacad";
@@ -109,6 +108,7 @@ in
     shellAliases = aliases;
     initContent = ''
       ulimit -n 2048
+      export GPG_TTY="$(tty)"
       ${functions}
       ${atuinZshExtras}
     '';
@@ -244,14 +244,16 @@ in
     matchBlocks = {
       "*" = {
         forwardAgent = true;
-        sendEnv = [ "LANG" "LC_*" ];
+        sendEnv = [
+          "LANG"
+          "LC_*"
+        ];
         hashKnownHosts = true;
       };
     };
-    includes = [
-      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
-    ];
+    includes =
+      lib.optionals pkgs.stdenv.hostPlatform.isLinux [ "/home/${user}/.ssh/config_external" ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ "/Users/${user}/.ssh/config_external" ];
   };
 
   starship = {

@@ -76,9 +76,11 @@
         "x86_64-linux"
         "aarch64-linux"
       ];
+      appLinuxSystems = [
+        "x86_64-linux"
+      ];
       darwinSystems = [
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
       defaultSystems = linuxSystems ++ darwinSystems;
       devShell =
@@ -146,7 +148,7 @@
     {
       devShells = eachSystemMap defaultSystems devShell;
       apps =
-        nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
+        nixpkgs.lib.genAttrs appLinuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
       checks =
         { }
         // mkChecks {
@@ -158,6 +160,11 @@
           arch = "x86_64";
           os = "linux";
           hostname = "indium";
+        }
+        // mkChecks {
+          arch = "aarch64";
+          os = "linux";
+          hostname = "nixos-vm";
         };
 
       darwinConfigurations = {
@@ -241,6 +248,27 @@
               };
             }
             ./hosts/nixos
+          ];
+        };
+        "nixos-vm@aarch64-linux" = nixpkgs.lib.nixosSystem {
+          system = "aarch64-linux";
+          specialArgs = inputs // {
+            inherit inputs;
+          };
+          modules = [
+            {
+              nixpkgs.overlays = overlays;
+            }
+            ./modules/shared
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                users.${user} = import ./modules/nixos/home-manager.nix;
+              };
+            }
+            ./hosts/nixos-vm
           ];
         };
       };

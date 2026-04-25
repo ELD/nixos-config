@@ -1,8 +1,13 @@
 { pkgs }:
 
 with pkgs;
-let shared-packages = import ../shared/packages.nix { inherit pkgs; }; in
-shared-packages ++ [
+let
+  inherit (pkgs) lib;
+  isAarch64Linux = pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isAarch64;
+  shared-packages = import ../shared/packages.nix { inherit pkgs; };
+in
+shared-packages
+++ [
 
   # Security and authentication
   yubikey-agent
@@ -24,45 +29,51 @@ shared-packages ++ [
   # galculator
 
   # Audio tools
+  alsa-utils
   cava # Terminal audio visualizer
+  mpc
+  pulseaudio # pactl for PipeWire pulse compatibility
   pavucontrol # Pulse audio controls
 
   # Testing and development tools
   direnv
-  rofi
-  rofi-calc
   postgresql
   libtool # for Emacs vterm
 
   # Screenshot and recording tools
-  flameshot
+  grim
+  slurp
 
   # Text and terminal utilities
+  alacritty
   feh # Manage wallpapers
-  screenkey
   tree
   unixtools.ifconfig
   unixtools.netstat
-  xclip # For the org-download package in Emacs
-  xorg.xwininfo # Provides a cursor to click and learn about windows
-  xorg.xrandr
+  wl-clipboard
+  wlr-randr
 
   # File and system utilities
   inotify-tools # inotifywait, inotifywatch - For file system events
-  i3lock-fancy-rapid
+  cliphist
+  hypridle
+  hyprlock
+  hyprpanel
   libnotify
+  mako
   pcmanfm # File browser
   sqlite
+  walker
   xdg-utils
 
   # Other utilities
-  yad # yad-calendar is used with polybar
-  xdotool
-  google-chrome
+  (if isAarch64Linux then chromium else google-chrome)
 
   # PDF viewer
   zathura
 
+]
+++ lib.optionals (!isAarch64Linux) [
   # Music and entertainment
   spotify
 ]
