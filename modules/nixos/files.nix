@@ -8,12 +8,12 @@ in
   "${xdg_configHome}/hypr/hyprland.conf" = {
     text = ''
       $mod = SUPER
-      $terminal = alacritty
+      $terminal = ghostty
       $launcher = walker
       $browser = ${browser}
       $fileManager = pcmanfm
 
-      monitor=,preferred,auto,1
+      monitor=,preferred,auto,2
 
       env = XCURSOR_SIZE,24
       env = HYPRCURSOR_SIZE,24

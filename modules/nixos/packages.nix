@@ -18,9 +18,9 @@ let
     pavucontrol
 
     # Wayland desktop tools
-    alacritty
     chromium
     cliphist
+    ghostty
     grim
     hypridle
     hyprlock
@@ -72,8 +72,8 @@ let
     slurp
 
     # Text and terminal utilities
-    alacritty
     feh # Manage wallpapers
+    ghostty
     tree
     unixtools.ifconfig
     unixtools.netstat
