@@ -2,10 +2,12 @@
   config,
   pkgs,
   lib,
+  profile ? "full",
   ...
 }:
 
 let
+  isVm = profile == "vm";
   name = "Eric Dattore";
   user = "edattore";
   email = "eric@dattore.me";
@@ -36,7 +38,7 @@ in
     enableZshIntegration = true;
   };
   bacon = {
-    enable = true;
+    enable = !isVm;
   };
   bat = {
     enable = true;
@@ -70,7 +72,7 @@ in
     historyWidgetOptions = [ ];
   };
   go = {
-    enable = true;
+    enable = !isVm;
     env = {
       goPath = "workspace/go";
       goBin = "workspace/go/bin";
@@ -83,7 +85,7 @@ in
     enable = true;
     enableZshIntegration = true;
   };
-  yt-dlp.enable = true;
+  yt-dlp.enable = !isVm;
   zoxide = {
     enable = true;
     enableZshIntegration = true;
@@ -226,7 +228,7 @@ in
 
   neovim = {
     package = pkgs.neovim;
-    enable = true;
+    enable = !isVm;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;

@@ -18,6 +18,8 @@ in
       "virtio_pci"
       "virtio_scsi"
       "virtio_blk"
+      "virtio_gpu"
+      "virtio_net"
       "usbhid"
       "sd_mod"
     ];
@@ -27,12 +29,16 @@ in
 
   fileSystems = {
     "/" = {
-      device = "/dev/disk/by-label/nixos";
+      device = "/dev/disk/by-uuid/8180b195-82d1-4246-9a41-6413dd224ed2";
       fsType = "ext4";
     };
     "/boot" = {
-      device = "/dev/disk/by-label/boot";
+      device = "/dev/disk/by-uuid/6B9C-3345";
       fsType = "vfat";
+      options = [
+        "fmask=0077"
+        "dmask=0077"
+      ];
     };
   };
 
@@ -122,20 +128,13 @@ in
 
   hardware.graphics.enable = true;
 
-  virtualisation = {
-    docker = {
-      enable = true;
-      logDriver = "json-file";
-    };
-    spiceUSBRedirection.enable = true;
-  };
+  virtualisation.spiceUSBRedirection.enable = true;
 
   users.users = {
     ${user} = {
       isNormalUser = true;
       extraGroups = [
         "wheel"
-        "docker"
         "video"
         "input"
       ];

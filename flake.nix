@@ -244,6 +244,9 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                extraSpecialArgs = {
+                  nixosProfile = "full";
+                };
                 users.${user} = import ./modules/nixos/home-manager.nix;
               };
             }
@@ -265,6 +268,9 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                extraSpecialArgs = {
+                  nixosProfile = "vm";
+                };
                 users.${user} = import ./modules/nixos/home-manager.nix;
               };
             }

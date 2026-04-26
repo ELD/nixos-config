@@ -1,131 +1,175 @@
-{ pkgs }:
+{
+  pkgs,
+  profile ? "full",
+}:
 
 with pkgs;
-[
-  # Formatters and LSP tools
-  nixfmt
+let
+  vmPackages = [
+    # Formatters and Nix tools
+    nixfmt
+    cachix
+    deadnix
+    statix
 
-  # Chat tools
-  gomuks
-  iamb
+    # Encryption/decryption tools
+    age
+    gnupg
+    sops
 
-  # Encryption/decryption tools
-  age
-  gnupg
-  sops
+    # General utilities
+    coreutils-full
+    curl
+    dust
+    fastfetch
+    fd
+    findutils
+    gawk
+    git
+    gnugrep
+    gnused
+    jq
+    lazygit
+    openssh
+    openssl
+    ripgrep
+    tealdeer
+    tmux
+    tokei
+    tree
+    unzip
+    wget
+    yq
+    zellij
+  ];
 
-  # Go dev tools
-  air
+  fullPackages = [
+    # Formatters and LSP tools
+    nixfmt
 
-  # Nix tools
-  attic-client
-  cachix
-  comma
-  deadnix
-  devenv
-  statix
-  yubikey-manager
+    # Chat tools
+    gomuks
+    iamb
 
-  # JavaScript tools
-  bun
-  # NOTE: Let's only use Bun instead of installing Node since it's better
-  # nodejs_latest
-  pnpm
-  yarn
+    # Encryption/decryption tools
+    age
+    gnupg
+    sops
 
-  # Golang tools
-  golangci-lint
-  templ
+    # Go dev tools
+    air
 
-  # Java tools
-  jdk
+    # Nix tools
+    attic-client
+    cachix
+    comma
+    deadnix
+    devenv
+    statix
+    yubikey-manager
 
-  # Lua
-  luajit
-  luajitPackages.luarocks
+    # JavaScript tools
+    bun
+    # NOTE: Let's only use Bun instead of installing Node since it's better
+    # nodejs_latest
+    pnpm
+    yarn
 
-  # VM/Containers
-  colima
+    # Golang tools
+    golangci-lint
+    templ
 
-  # CI/CD and Cloud
-  doctl
-  flyctl
-  gh
-  terraform
-  turso-cli
+    # Java tools
+    jdk
 
-  # Rust tools
-  bacon
-  cargo-nextest
-  cargo-expand
-  cargo-outdated
-  cargo-shuttle
-  cargo-sweep
-  cargo-vet
-  cargo-wipe
-  diesel-cli
-  evcxr
-  rustup
-  sqlx-cli
-  sccache
+    # Lua
+    luajit
+    luajitPackages.luarocks
 
-  # Python tools
-  python3
-  python3Packages.pip
-  python3Packages.jupyter-core
-  python3Packages.ipython
-  python3Packages.ipykernel
-  python3Packages.fonttools
-  pylint
-  pipenv
+    # VM/Containers
+    colima
 
-  # LaTeX/Typesetting
-  tectonic
-  typst
-  texliveFull
+    # CI/CD and Cloud
+    doctl
+    flyctl
+    gh
+    terraform
+    turso-cli
 
-  # AI tools
-  opencode
+    # Rust tools
+    bacon
+    cargo-nextest
+    cargo-expand
+    cargo-outdated
+    cargo-shuttle
+    cargo-sweep
+    cargo-vet
+    cargo-wipe
+    diesel-cli
+    evcxr
+    rustup
+    sqlx-cli
+    sccache
 
-  # Zig
-  zigpkgs.master
+    # Python tools
+    python3
+    python3Packages.pip
+    python3Packages.jupyter-core
+    python3Packages.ipython
+    python3Packages.ipykernel
+    python3Packages.fonttools
+    pylint
+    pipenv
 
-  # General utilities
-  ascii-image-converter
-  chafa
-  coreutils-full
-  curl
-  devenv
-  dust
-  fastfetch
-  fd
-  ffmpeg
-  findutils
-  fontforge
-  gawk
-  git
-  gnugrep
-  gnused
-  jq
-  lazygit
-  lazysql
-  mdcat
-  openssh
-  openssl
-  pkg-config
-  pre-commit
-  ranger
-  ripgrep
-  ripgrep-all
-  tealdeer
-  tmux
-  tokei
-  tree
-  treefmt
-  tree-sitter
-  unzip
-  wget
-  yt-dlp
-  yq
-  zellij
-]
+    # LaTeX/Typesetting
+    tectonic
+    typst
+    texliveFull
+
+    # AI tools
+    opencode
+
+    # Zig
+    zigpkgs.master
+
+    # General utilities
+    ascii-image-converter
+    chafa
+    coreutils-full
+    curl
+    devenv
+    dust
+    fastfetch
+    fd
+    ffmpeg
+    findutils
+    fontforge
+    gawk
+    git
+    gnugrep
+    gnused
+    jq
+    lazygit
+    lazysql
+    mdcat
+    openssh
+    openssl
+    pkg-config
+    pre-commit
+    ranger
+    ripgrep
+    ripgrep-all
+    tealdeer
+    tmux
+    tokei
+    tree
+    treefmt
+    tree-sitter
+    unzip
+    wget
+    yt-dlp
+    yq
+    zellij
+  ];
+in
+if profile == "vm" then vmPackages else fullPackages

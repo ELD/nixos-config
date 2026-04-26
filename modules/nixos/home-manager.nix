@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  nixosProfile ? "full",
   ...
 }:
 
@@ -15,8 +16,12 @@ let
       pkgs
       lib
       ;
+    profile = nixosProfile;
   };
-  shared-files = import ../shared/files.nix { inherit config pkgs; };
+  shared-files = import ../shared/files.nix {
+    inherit config pkgs;
+    profile = nixosProfile;
+  };
 
 in
 {
@@ -24,7 +29,7 @@ in
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-    packages = pkgs.callPackage ./packages.nix { };
+    packages = pkgs.callPackage ./packages.nix { profile = nixosProfile; };
     file = shared-files // import ./files.nix { inherit pkgs user; };
     stateVersion = "25.11";
   };
