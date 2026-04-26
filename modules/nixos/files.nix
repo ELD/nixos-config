@@ -1,8 +1,57 @@
-{ pkgs, user, ... }:
+{
+  pkgs,
+  user,
+  profile ? "full",
+  ...
+}:
 
 let
   browser = if pkgs.stdenv.hostPlatform.isAarch64 then "chromium" else "google-chrome-stable";
   xdg_configHome = ".config";
+  isVm = profile == "vm";
+  vmHyprpanelConfig = builtins.toJSON {
+    "theme.bar.scaling" = 85;
+    "theme.bar.margin_sides" = "0.2em";
+    "theme.bar.outer_spacing" = "0.6em";
+    "theme.bar.label_spacing" = "0.25em";
+    "bar.windowtitle.truncation" = true;
+    "bar.windowtitle.truncation_size" = 20;
+    "bar.layouts" = {
+      "0" = {
+        left = [
+          "dashboard"
+          "workspaces"
+        ];
+        middle = [ "clock" ];
+        right = [
+          "volume"
+          "notifications"
+        ];
+      };
+      "1" = {
+        left = [
+          "dashboard"
+          "workspaces"
+        ];
+        middle = [ "clock" ];
+        right = [
+          "volume"
+          "notifications"
+        ];
+      };
+      "2" = {
+        left = [
+          "dashboard"
+          "workspaces"
+        ];
+        middle = [ "clock" ];
+        right = [
+          "volume"
+          "notifications"
+        ];
+      };
+    };
+  };
 in
 {
   "${xdg_configHome}/hypr/hyprland.conf" = {
@@ -186,3 +235,15 @@ in
     '';
   };
 }
+// (
+  if isVm then
+    {
+      "${xdg_configHome}/hyprpanel/config.json" = {
+        text = ''
+          ${vmHyprpanelConfig}
+        '';
+      };
+    }
+  else
+    { }
+)

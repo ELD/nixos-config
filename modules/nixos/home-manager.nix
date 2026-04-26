@@ -30,7 +30,12 @@ in
     username = "${user}";
     homeDirectory = "/home/${user}";
     packages = pkgs.callPackage ./packages.nix { profile = nixosProfile; };
-    file = shared-files // import ./files.nix { inherit pkgs user; };
+    file =
+      shared-files
+      // import ./files.nix {
+        inherit pkgs user;
+        profile = nixosProfile;
+      };
     stateVersion = "25.11";
   };
 
