@@ -20,6 +20,7 @@ let
     # Wayland desktop tools
     chromium
     cliphist
+    elephant
     ghostty
     grim
     hypridle
@@ -83,6 +84,7 @@ let
     # File and system utilities
     inotify-tools # inotifywait, inotifywatch - For file system events
     cliphist
+    elephant
     hypridle
     hyprlock
     hyprpanel

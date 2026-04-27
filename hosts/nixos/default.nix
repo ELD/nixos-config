@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  lib,
   pkgs,
   sops-nix,
   ...
@@ -17,14 +18,18 @@ in
     sops-nix.nixosModules.sops
   ];
 
-  # Use the systemd-boot EFI boot loader.
+  # Lanzaboote replaces systemd-boot to support UEFI Secure Boot.
   boot = {
     loader = {
       systemd-boot = {
-        enable = true;
+        enable = lib.mkForce false;
         configurationLimit = 42;
       };
       efi.canTouchEfiVariables = true;
+    };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
     };
     initrd.availableKernelModules = [
       "xhci_pci"
@@ -217,6 +222,7 @@ in
     sops
     gitFull
     inetutils
+    sbctl
   ];
 
   system.stateVersion = "25.11"; # Don't change this

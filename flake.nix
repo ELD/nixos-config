@@ -37,6 +37,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.0.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets = {
       url = "git+ssh://git@github.com/ELD/nix-secrets.git";
       flake = false;
@@ -62,6 +67,8 @@
       home-manager,
       nixpkgs,
       disko,
+      nixos-hardware,
+      lanzaboote,
       sops-nix,
       secrets,
       flake-utils,
@@ -239,6 +246,8 @@
             }
             ./modules/shared
             disko.nixosModules.disko
+            nixos-hardware.nixosModules.framework-12th-gen-intel
+            lanzaboote.nixosModules.lanzaboote
             home-manager.nixosModules.home-manager
             {
               home-manager = {
