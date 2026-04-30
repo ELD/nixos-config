@@ -57,6 +57,15 @@ in
         color = rgb(1f1f1f)
       }
 
+      auth {
+        fingerprint {
+          enabled = true
+          ready_message = Scan fingerprint to unlock
+          present_message = Scanning...
+          retry_delay = 250
+        }
+      }
+
       input-field {
         size = 320, 64
         position = 0, -20
@@ -66,7 +75,7 @@ in
         outer_color = rgb(546e7a)
         inner_color = rgb(1f1f1f)
         font_color = rgb(ffffff)
-        placeholder_text = Password
+        placeholder_text = Password or fingerprint
       }
     '';
   };

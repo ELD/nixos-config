@@ -14,12 +14,42 @@ in
 {
   imports = [
     ../../modules/nixos/secrets.nix
-    ../../modules/nixos/disk-config.nix
+    ../../modules/nixos/power.nix
+    # ../../modules/nixos/disk-config.nix
     sops-nix.nixosModules.sops
+  ];
+
+  services.upower.enable = true;
+
+  # pasted from /etc/nixos/hardware-configuration.nix
+  fileSystems."/" =
+    { device = "/dev/mapper/luks-49933748-7ffc-4a90-a08d-33753dceec1a";
+      fsType = "ext4";
+    };
+
+  boot.initrd.luks.devices."luks-49933748-7ffc-4a90-a08d-33753dceec1a" = {
+    device = "/dev/disk/by-uuid/49933748-7ffc-4a90-a08d-33753dceec1a";
+    crypttabExtraOpts = [ "tpm2-device=auto" ];
+  };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/EA24-31A9";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 40 * 1024;
+    }
   ];
 
   # Lanzaboote replaces systemd-boot to support UEFI Secure Boot.
   boot = {
+    resumeDevice = "/dev/mapper/luks-49933748-7ffc-4a90-a08d-33753dceec1a";
+    kernelParams = [ "resume_offset=116439040" ];
+
     loader = {
       systemd-boot = {
         enable = lib.mkForce false;
@@ -31,6 +61,7 @@ in
       enable = true;
       pkiBundle = "/var/lib/sbctl";
     };
+    initrd.systemd.enable = true;
     initrd.availableKernelModules = [
       "xhci_pci"
       "ahci"
@@ -38,23 +69,25 @@ in
       "usbhid"
       "usb_storage"
       "sd_mod"
+      "thunderbolt"
     ];
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = [ "uinput" ];
+    kernelModules = [ "uinput" "kvm-intel" ];
   };
 
   # Set your time zone.
-  time.timeZone = "America/New_York";
+  time.timeZone = "America/Denver";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
     hostName = "Indium"; # Define your hostname.
-    useDHCP = true;
-    # interfaces."%INTERFACE%".useDHCP = true;
+    wireless.enable = true;
+    wireless.extraConfig = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel";
+    networkmanager.enable = true;
   };
 
   nix = {
@@ -83,7 +116,10 @@ in
 
   # Manages keys and such
   programs = {
-    gnupg.agent.enable = true;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
 
     hyprland = {
       enable = true;
@@ -113,6 +149,16 @@ in
   };
 
   services = {
+    pcscd.enable = true;
+
+    udev.packages = [ pkgs.brightnessctl ];
+
+    logind.settings.Login = {
+      HandleLidSwitch = "suspend-then-hibernate";
+      HandleLidSwitchDocked = "ignore";
+      HandleLidSwitchExternalPower = "suspend";
+    };
+
     greetd = {
       enable = true;
       settings = {
@@ -149,15 +195,24 @@ in
     tumbler.enable = true; # Thumbnail support for images
   };
 
+  systemd.sleep.settings.Sleep.HibernateDelaySec = "30min";
+
   # Enable CUPS to print documents
   # services.printing.enable = true;
   # services.printing.drivers = [ pkgs.brlaser ]; # Brother printer driver
 
+  hardware.enableRedistributableFirmware = true;
+
   # Enable sound
   # sound.enable = true;
   # hardware.pulseaudio.enable = true;
+  hardware.bluetooth.enable = true;
   security.polkit.enable = true;
   security.rtkit.enable = true;
+  security.pam.services = {
+    hyprlock.fprintAuth = true;
+    sudo.fprintAuth = true;
+  };
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -187,6 +242,7 @@ in
       extraGroups = [
         "wheel" # Enable ‘sudo’ for the user.
         "docker"
+        "video"
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;
@@ -212,6 +268,7 @@ in
       }
     ];
   };
+  security.tpm2.enable = true;
 
   fonts.packages = with pkgs; [
     jetbrains-mono
@@ -223,6 +280,7 @@ in
     gitFull
     inetutils
     sbctl
+    tpm2-tools
   ];
 
   system.stateVersion = "25.11"; # Don't change this

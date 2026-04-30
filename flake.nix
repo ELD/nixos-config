@@ -259,7 +259,7 @@
                 users.${user} = import ./modules/nixos/home-manager.nix;
               };
             }
-            ./hosts/nixos
+            ./hosts/nixos/indium.nix
           ];
         };
         "nixos-vm@aarch64-linux" = nixpkgs.lib.nixosSystem {

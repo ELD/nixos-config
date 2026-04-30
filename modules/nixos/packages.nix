@@ -62,11 +62,13 @@ let
     mpc
     pulseaudio # pactl for PipeWire pulse compatibility
     pavucontrol # Pulse audio controls
+    cider-2 # Apple Music
 
     # Testing and development tools
     direnv
     postgresql
     libtool # for Emacs vterm
+    gcc
 
     # Screenshot and recording tools
     grim
@@ -97,14 +99,12 @@ let
 
     # Other utilities
     (if isAarch64Linux then chromium else google-chrome)
+    firefox-devedition
+    _1password-gui
 
     # PDF viewer
     zathura
 
-  ]
-  ++ lib.optionals (!isAarch64Linux) [
-    # Music and entertainment
-    spotify
   ];
 in
 shared-packages ++ (if profile == "vm" then vmPackages else fullPackages)

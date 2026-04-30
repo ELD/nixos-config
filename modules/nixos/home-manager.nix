@@ -9,7 +9,8 @@
 
 let
   user = "edattore";
-  browser = if pkgs.stdenv.hostPlatform.isAarch64 then "chromium" else "google-chrome-stable";
+  # browser = if pkgs.stdenv.hostPlatform.isAarch64 then "chromium" else "google-chrome-stable";
+  browser = "firefox-devedition";
   shared-programs = import ../shared/home-manager.nix {
     inherit
       inputs
@@ -31,7 +32,7 @@ let
     "$browser" = browser;
     "$fileManager" = "pcmanfm";
 
-    monitor = ",preferred,auto,2";
+    monitor = ",preferred,auto,1.175";
 
     env = [
       "XCURSOR_SIZE,24"
@@ -52,7 +53,8 @@ let
       follow_mouse = 1;
       touchpad = {
         natural_scroll = true;
-        tap-to-click = true;
+        tap-to-click = false;
+        clickfinger_behavior = true;
       };
     };
 
@@ -154,6 +156,8 @@ let
     bindel = [
       ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%"
       ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"
+      ", XF86MonBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl set +5%"
+      ", XF86MonBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl set 5%-"
     ];
 
     bindl = [

@@ -111,6 +111,7 @@ in
     initContent = ''
       ulimit -n 2048
       export GPG_TTY="$(tty)"
+      export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
       ${functions}
       ${atuinZshExtras}
     '';
@@ -221,7 +222,7 @@ in
     enable = true;
     scdaemonSettings =
       { }
-      // lib.optionalAttrs pkgs.stdenvNoCC.isDarwin {
+      // lib.optionalAttrs (pkgs.stdenvNoCC.isDarwin || pkgs.stdenvNoCC.isLinux) {
         disable-ccid = true;
       };
   };
