@@ -54,7 +54,7 @@ let
 
     # Productivity tools
     bc # old school calculator
-    # galculator
+    galculator
 
     # Audio tools
     alsa-utils
@@ -101,6 +101,7 @@ let
     (if isAarch64Linux then chromium else google-chrome)
     firefox-devedition
     _1password-gui
+    obsidian
 
     # PDF viewer
     zathura

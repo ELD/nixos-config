@@ -55,6 +55,7 @@
       url = "github:mitchellh/zig-overlay";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
+    my-fonts.url = "git+ssh://git@github.com/ELD/fonts.git";
   };
   outputs =
     {
@@ -75,6 +76,7 @@
       neovim-nightly-overlay,
       zig,
       llm-agents,
+      my-fonts,
     }@inputs:
     let
       inherit (flake-utils.lib) eachSystemMap;

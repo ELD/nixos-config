@@ -3,6 +3,7 @@
   inputs,
   lib,
   pkgs,
+  my-fonts,
   sops-nix,
   ...
 }:
@@ -19,7 +20,6 @@ in
     sops-nix.nixosModules.sops
   ];
 
-  services.upower.enable = true;
 
   # pasted from /etc/nixos/hardware-configuration.nix
   fileSystems."/" =
@@ -149,6 +149,8 @@ in
   };
 
   services = {
+    fwupd.enable = true;
+    upower.enable = true;
     pcscd.enable = true;
 
     udev.packages = [ pkgs.brightnessctl ];
@@ -273,6 +275,8 @@ in
   fonts.packages = with pkgs; [
     jetbrains-mono
     font-awesome
+
+    my-fonts.packages.${pkgs.stdenv.hostPlatform.system}.tx02
   ];
 
   environment.systemPackages = with pkgs; [

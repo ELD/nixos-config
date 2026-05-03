@@ -179,6 +179,24 @@ in
     packages = pkgs.callPackage ./packages.nix { profile = nixosProfile; };
     file = shared-files // import ./files.nix { profile = nixosProfile; };
     stateVersion = "25.11";
+  }
+  // lib.optionalAttrs (nixosProfile != "vm") {
+    activation.hyprpanelPowerMenu = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      config_file="/home/${user}/.config/hyprpanel/config.json"
+      config_dir="$(${pkgs.coreutils}/bin/dirname "$config_file")"
+      ${pkgs.coreutils}/bin/mkdir -p "$config_dir"
+
+      if [ ! -s "$config_file" ]; then
+        ${pkgs.coreutils}/bin/printf '{}\n' > "$config_file"
+      fi
+
+      tmp_file="$(${pkgs.coreutils}/bin/mktemp)"
+      ${pkgs.jq}/bin/jq \
+        --arg sleep_command "systemctl suspend-then-hibernate" \
+        '.["menus.dashboard.powermenu.sleep"] = $sleep_command | .["menus.power.sleep"] = $sleep_command' \
+        "$config_file" > "$tmp_file"
+      ${pkgs.coreutils}/bin/mv "$tmp_file" "$config_file"
+    '';
   };
 
   # Use a dark theme
