@@ -1,27 +1,174 @@
-{ inputs, config, pkgs, lib, ... }:
+{
+  inputs,
+  config,
+  pkgs,
+  lib,
+  nixosProfile ? "full",
+  ...
+}:
 
 let
   user = "edattore";
-  xdg_configHome  = "/home/${user}/.config";
-  shared-programs = import ../shared/home-manager.nix { inherit inputs config pkgs lib; };
-  shared-files = import ../shared/files.nix { inherit config pkgs; };
-
-  polybar-user_modules = builtins.readFile (pkgs.replaceVars ./config/polybar/user_modules.ini {
-    packages = "${xdg_configHome}/polybar/bin/check-nixos-updates.sh";
-    searchpkgs = "${xdg_configHome}/polybar/bin/search-nixos-updates.sh";
-    launcher = "${xdg_configHome}/polybar/bin/launcher.sh";
-    powermenu = "${xdg_configHome}/rofi/bin/powermenu.sh";
-    calendar = "${xdg_configHome}/polybar/bin/popup-calendar.sh";
-  });
-
-  polybar-config = pkgs.replaceVars ./config/polybar/config.ini {
-    font0 = "DejaVu Sans:size=12;3";
-    font1 = "feather:size=12;3"; # from overlay
+  # browser = if pkgs.stdenv.hostPlatform.isAarch64 then "chromium" else "google-chrome-stable";
+  browser = "firefox-devedition";
+  shared-programs = import ../shared/home-manager.nix {
+    inherit
+      inputs
+      config
+      pkgs
+      lib
+      ;
+    profile = nixosProfile;
+  };
+  shared-files = import ../shared/files.nix {
+    inherit config pkgs;
+    profile = nixosProfile;
   };
 
-  polybar-modules = builtins.readFile ./config/polybar/modules.ini;
-  polybar-bars = builtins.readFile ./config/polybar/bars.ini;
-  polybar-colors = builtins.readFile ./config/polybar/colors.ini;
+  hyprlandSettings = {
+    "$mod" = "SUPER";
+    "$terminal" = "ghostty";
+    "$launcher" = "walker";
+    "$browser" = browser;
+    "$fileManager" = "pcmanfm";
+
+    monitor = ",preferred,auto,1.175";
+
+    env = [
+      "XCURSOR_SIZE,24"
+      "HYPRCURSOR_SIZE,24"
+      "NIXOS_OZONE_WL,1"
+    ];
+
+    exec-once = [
+      "hyprpanel"
+      "hypridle"
+      "mako"
+      "wl-paste --watch cliphist store"
+    ];
+
+    input = {
+      kb_layout = "us";
+      kb_options = "ctrl:nocaps";
+      follow_mouse = 1;
+      touchpad = {
+        natural_scroll = true;
+        tap-to-click = false;
+        clickfinger_behavior = true;
+      };
+    };
+
+    general = {
+      gaps_in = 5;
+      gaps_out = 16;
+      border_size = 2;
+      layout = "dwindle";
+    };
+
+    decoration = {
+      rounding = 12;
+      shadow = {
+        enabled = true;
+        range = 8;
+        render_power = 3;
+      };
+      blur = {
+        enabled = true;
+        size = 3;
+        passes = 1;
+      };
+    };
+
+    animations = {
+      enabled = true;
+      bezier = "easeOutQuint,0.23,1,0.32,1";
+      animation = [
+        "windows,1,4,easeOutQuint"
+        "border,1,6,default"
+        "fade,1,4,default"
+        "workspaces,1,4,easeOutQuint"
+      ];
+    };
+
+    dwindle = {
+      pseudotile = true;
+      preserve_split = true;
+    };
+
+    misc = {
+      disable_hyprland_logo = true;
+      force_default_wallpaper = 0;
+    };
+
+    bind = [
+      "$mod, Return, exec, $terminal"
+      "$mod, Space, exec, $launcher"
+      "$mod SHIFT, X, exec, keepassxc"
+      "CTRL ALT, Return, exec, $browser"
+      "$mod SHIFT, Space, exec, $fileManager"
+      "$mod, Q, killactive,"
+      "ALT, F4, killactive,"
+      "$mod, F, fullscreen,"
+      "$mod, D, togglefloating,"
+      "$mod, G, togglegroup,"
+      "$mod SHIFT, G, changegroupactive, f"
+      "$mod, Tab, workspace, previous"
+      "CTRL ALT, BackSpace, exec, hyprlock"
+      "$mod, H, movefocus, l"
+      "$mod, J, movefocus, d"
+      "$mod, K, movefocus, u"
+      "$mod, L, movefocus, r"
+      "$mod SHIFT, H, movewindow, l"
+      "$mod SHIFT, J, movewindow, d"
+      "$mod SHIFT, K, movewindow, u"
+      "$mod SHIFT, L, movewindow, r"
+      "$mod, T, workspace, 2"
+      "$mod, B, workspace, 1"
+      "$mod, W, workspace, 4"
+      "$mod, Left, workspace, e-1"
+      "$mod, Right, workspace, e+1"
+      "$mod, Up, workspace, e-1"
+      "$mod, Down, workspace, e+1"
+      "$mod, 1, workspace, 1"
+      "$mod, 2, workspace, 2"
+      "$mod, 3, workspace, 3"
+      "$mod, 4, workspace, 4"
+      "$mod, 5, workspace, 5"
+      "$mod, 6, workspace, 6"
+      "$mod, 7, workspace, 7"
+      "$mod, 8, workspace, 8"
+      "$mod, 9, workspace, 9"
+      "$mod, 0, workspace, 10"
+      "$mod SHIFT, 1, movetoworkspace, 1"
+      "$mod SHIFT, 2, movetoworkspace, 2"
+      "$mod SHIFT, 3, movetoworkspace, 3"
+      "$mod SHIFT, 4, movetoworkspace, 4"
+      "$mod SHIFT, 5, movetoworkspace, 5"
+      "$mod SHIFT, 6, movetoworkspace, 6"
+      "$mod SHIFT, 7, movetoworkspace, 7"
+      "$mod SHIFT, 8, movetoworkspace, 8"
+      "$mod SHIFT, 9, movetoworkspace, 9"
+      "$mod SHIFT, 0, movetoworkspace, 10"
+      '', Print, exec, grim -g "$(slurp)" - | wl-copy''
+      "SHIFT, Print, exec, grim - | wl-copy"
+    ];
+
+    bindel = [
+      ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%"
+      ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"
+      ", XF86MonBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl set +5%"
+      ", XF86MonBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl set 5%-"
+    ];
+
+    bindl = [
+      ", XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    ];
+
+    bindm = [
+      "$mod, mouse:272, movewindow"
+      "$mod, mouse:273, resizewindow"
+    ];
+  };
 
 in
 {
@@ -29,9 +176,27 @@ in
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-    packages = pkgs.callPackage ./packages.nix {};
-    file = shared-files // import ./files.nix { inherit user; };
+    packages = pkgs.callPackage ./packages.nix { profile = nixosProfile; };
+    file = shared-files // import ./files.nix { profile = nixosProfile; };
     stateVersion = "25.11";
+  }
+  // lib.optionalAttrs (nixosProfile != "vm") {
+    activation.hyprpanelPowerMenu = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      config_file="/home/${user}/.config/hyprpanel/config.json"
+      config_dir="$(${pkgs.coreutils}/bin/dirname "$config_file")"
+      ${pkgs.coreutils}/bin/mkdir -p "$config_dir"
+
+      if [ ! -s "$config_file" ]; then
+        ${pkgs.coreutils}/bin/printf '{}\n' > "$config_file"
+      fi
+
+      tmp_file="$(${pkgs.coreutils}/bin/mktemp)"
+      ${pkgs.jq}/bin/jq \
+        --arg sleep_command "systemctl suspend-then-hibernate" \
+        '.["menus.dashboard.powermenu.sleep"] = $sleep_command | .["menus.power.sleep"] = $sleep_command' \
+        "$config_file" > "$tmp_file"
+      ${pkgs.coreutils}/bin/mv "$tmp_file" "$config_file"
+    '';
   };
 
   # Use a dark theme
@@ -45,73 +210,40 @@ in
       name = "Adwaita-dark";
       package = pkgs.adwaita-icon-theme;
     };
+    gtk4.theme = config.gtk.theme;
   };
 
-  # Screen lock
   services = {
-    screen-locker = {
-      enable = true;
-      inactiveInterval = 10;
-      lockCmd = "${pkgs.i3lock-fancy-rapid}/bin/i3lock-fancy-rapid 10 15";
-    };
-
     # Auto mount devices
     udiskie.enable = true;
-
-    polybar = {
-      enable = true;
-      config = polybar-config;
-      # extraConfig = polybar-bars + polybar-colors + polybar-modules + polybar-user_modules;
-      package = pkgs.polybarFull;
-      script = "polybar main &";
-    };
-
-    dunst = {
-      enable = true;
-      package = pkgs.dunst;
-      settings = {
-        global = {
-          monitor = 0;
-          follow = "mouse";
-          border = 0;
-          height = 400;
-          width = 320;
-          offset = "33x65";
-          indicate_hidden = "yes";
-          shrink = "no";
-          separator_height = 0;
-          padding = 32;
-          horizontal_padding = 32;
-          frame_width = 0;
-          sort = "no";
-          idle_threshold = 120;
-          font = "Noto Sans";
-          line_height = 4;
-          markup = "full";
-          format = "<b>%s</b>\n%b";
-          alignment = "left";
-          transparency = 10;
-          show_age_threshold = 60;
-          word_wrap = "yes";
-          ignore_newline = "no";
-          stack_duplicates = false;
-          hide_duplicate_count = "yes";
-          show_indicators = "no";
-          icon_position = "left";
-          icon_theme = "Adwaita-dark";
-          sticky_history = "yes";
-          history_length = 20;
-          history = "ctrl+grave";
-          browser = "google-chrome-stable";
-          always_run_script = true;
-          title = "Dunst";
-          class = "Dunst";
-          max_icon_size = 64;
-        };
-      };
-    };
   };
 
-  programs = shared-programs // { gpg.enable = true; };
+  systemd.user.services.elephant = {
+    Unit = {
+      Description = "Elephant application launcher backend";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      ExecStart = lib.getExe pkgs.elephant;
+      Restart = "always";
+      RestartSec = 10;
+    };
+
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  wayland.windowManager.hyprland = {
+    enable = true;
+    package = null;
+    portalPackage = null;
+    systemd.enable = true;
+    settings = hyprlandSettings;
+  };
+
+  programs = shared-programs // {
+    gpg.enable = true;
+  };
 
 }

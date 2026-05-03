@@ -1,68 +1,111 @@
-{ pkgs }:
+{
+  pkgs,
+  profile ? "full",
+}:
 
 with pkgs;
-let shared-packages = import ../shared/packages.nix { inherit pkgs; }; in
-shared-packages ++ [
+let
+  inherit (pkgs) lib;
+  isAarch64Linux = pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isAarch64;
+  shared-packages = import ../shared/packages.nix { inherit pkgs profile; };
+  vmPackages = [
+    # Security and authentication
+    keepassxc
 
-  # Security and authentication
-  yubikey-agent
-  keepassxc
+    # Audio tools
+    alsa-utils
+    pulseaudio # pactl for PipeWire pulse compatibility
+    pavucontrol
 
-  # App and package management
-  appimage-run
-  gnumake
-  cmake
-  home-manager
+    # Wayland desktop tools
+    chromium
+    cliphist
+    elephant
+    ghostty
+    grim
+    hypridle
+    hyprlock
+    hyprpanel
+    libnotify
+    mako
+    pcmanfm
+    slurp
+    walker
+    wl-clipboard
+    wlr-randr
+    xdg-utils
+  ];
+  fullPackages = [
 
-  # Media and design tools
-  vlc
-  fontconfig
-  font-manager
+    # Security and authentication
+    yubikey-agent
+    keepassxc
 
-  # Productivity tools
-  bc # old school calculator
-  # galculator
+    # App and package management
+    appimage-run
+    gnumake
+    cmake
+    home-manager
 
-  # Audio tools
-  cava # Terminal audio visualizer
-  pavucontrol # Pulse audio controls
+    # Media and design tools
+    vlc
+    fontconfig
+    font-manager
 
-  # Testing and development tools
-  direnv
-  rofi
-  rofi-calc
-  postgresql
-  libtool # for Emacs vterm
+    # Productivity tools
+    bc # old school calculator
+    galculator
 
-  # Screenshot and recording tools
-  flameshot
+    # Audio tools
+    alsa-utils
+    cava # Terminal audio visualizer
+    mpc
+    pulseaudio # pactl for PipeWire pulse compatibility
+    pavucontrol # Pulse audio controls
+    cider-2 # Apple Music
 
-  # Text and terminal utilities
-  feh # Manage wallpapers
-  screenkey
-  tree
-  unixtools.ifconfig
-  unixtools.netstat
-  xclip # For the org-download package in Emacs
-  xorg.xwininfo # Provides a cursor to click and learn about windows
-  xorg.xrandr
+    # Testing and development tools
+    direnv
+    postgresql
+    libtool # for Emacs vterm
+    gcc
 
-  # File and system utilities
-  inotify-tools # inotifywait, inotifywatch - For file system events
-  i3lock-fancy-rapid
-  libnotify
-  pcmanfm # File browser
-  sqlite
-  xdg-utils
+    # Screenshot and recording tools
+    grim
+    slurp
 
-  # Other utilities
-  yad # yad-calendar is used with polybar
-  xdotool
-  google-chrome
+    # Text and terminal utilities
+    feh # Manage wallpapers
+    ghostty
+    tree
+    unixtools.ifconfig
+    unixtools.netstat
+    wl-clipboard
+    wlr-randr
 
-  # PDF viewer
-  zathura
+    # File and system utilities
+    inotify-tools # inotifywait, inotifywatch - For file system events
+    cliphist
+    elephant
+    hypridle
+    hyprlock
+    hyprpanel
+    libnotify
+    mako
+    pcmanfm # File browser
+    sqlite
+    walker
+    xdg-utils
 
-  # Music and entertainment
-  spotify
-]
+    # Other utilities
+    (if isAarch64Linux then chromium else google-chrome)
+    firefox-devedition
+    _1password-gui
+    obsidian
+
+    # PDF viewer
+    zathura
+
+  ];
+in
+shared-packages ++ (if profile == "vm" then vmPackages else fullPackages)

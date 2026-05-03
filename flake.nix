@@ -37,6 +37,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.0.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets = {
       url = "git+ssh://git@github.com/ELD/nix-secrets.git";
       flake = false;
@@ -50,6 +55,7 @@
       url = "github:mitchellh/zig-overlay";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
+    my-fonts.url = "git+ssh://git@github.com/ELD/fonts.git";
   };
   outputs =
     {
@@ -62,12 +68,15 @@
       home-manager,
       nixpkgs,
       disko,
+      nixos-hardware,
+      lanzaboote,
       sops-nix,
       secrets,
       flake-utils,
       neovim-nightly-overlay,
       zig,
       llm-agents,
+      my-fonts,
     }@inputs:
     let
       inherit (flake-utils.lib) eachSystemMap;
@@ -76,9 +85,11 @@
         "x86_64-linux"
         "aarch64-linux"
       ];
+      appLinuxSystems = [
+        "x86_64-linux"
+      ];
       darwinSystems = [
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
       defaultSystems = linuxSystems ++ darwinSystems;
       devShell =
@@ -146,7 +157,7 @@
     {
       devShells = eachSystemMap defaultSystems devShell;
       apps =
-        nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
+        nixpkgs.lib.genAttrs appLinuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
       checks =
         { }
         // mkChecks {
@@ -158,6 +169,11 @@
           arch = "x86_64";
           os = "linux";
           hostname = "indium";
+        }
+        // mkChecks {
+          arch = "aarch64";
+          os = "linux";
+          hostname = "nixos-vm";
         };
 
       darwinConfigurations = {
@@ -232,15 +248,44 @@
             }
             ./modules/shared
             disko.nixosModules.disko
+            nixos-hardware.nixosModules.framework-12th-gen-intel
+            lanzaboote.nixosModules.lanzaboote
             home-manager.nixosModules.home-manager
             {
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                extraSpecialArgs = {
+                  nixosProfile = "full";
+                };
                 users.${user} = import ./modules/nixos/home-manager.nix;
               };
             }
-            ./hosts/nixos
+            ./hosts/nixos/indium.nix
+          ];
+        };
+        "nixos-vm@aarch64-linux" = nixpkgs.lib.nixosSystem {
+          system = "aarch64-linux";
+          specialArgs = inputs // {
+            inherit inputs;
+          };
+          modules = [
+            {
+              nixpkgs.overlays = overlays;
+            }
+            ./modules/shared
+            home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = {
+                  nixosProfile = "vm";
+                };
+                users.${user} = import ./modules/nixos/home-manager.nix;
+              };
+            }
+            ./hosts/nixos-vm
           ];
         };
       };

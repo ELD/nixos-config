@@ -2,10 +2,12 @@
   config,
   pkgs,
   lib,
+  profile ? "full",
   ...
 }:
 
 let
+  isVm = profile == "vm";
   name = "Eric Dattore";
   user = "edattore";
   email = "eric@dattore.me";
@@ -16,7 +18,7 @@ let
     gap = "git add -p";
     gcia = "git commit --amend --no-edit";
     npm = "pnpm";
-    npx = "pnmp dlx";
+    npx = "pnpm dlx";
   };
   atuinZshExtras =
     if config.programs.atuin.enable then
@@ -36,7 +38,7 @@ in
     enableZshIntegration = true;
   };
   bacon = {
-    enable = true;
+    enable = !isVm;
   };
   bat = {
     enable = true;
@@ -70,7 +72,7 @@ in
     historyWidgetOptions = [ ];
   };
   go = {
-    enable = true;
+    enable = !isVm;
     env = {
       goPath = "workspace/go";
       goBin = "workspace/go/bin";
@@ -83,7 +85,7 @@ in
     enable = true;
     enableZshIntegration = true;
   };
-  yt-dlp.enable = true;
+  yt-dlp.enable = !isVm;
   zoxide = {
     enable = true;
     enableZshIntegration = true;
@@ -97,7 +99,6 @@ in
     dotDir = "${config.xdg.configHome}/zsh";
     localVariables = {
       LANG = "en_US.UTF-8";
-      GPG_TTY = "/dev/ttys000";
       DEFAULT_USER = "${config.home.username}";
       CLICOLOR = 1;
       LS_COLORS = "ExFxBxDxCxegedabagacad";
@@ -109,6 +110,8 @@ in
     shellAliases = aliases;
     initContent = ''
       ulimit -n 2048
+      export GPG_TTY="$(tty)"
+      export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
       ${functions}
       ${atuinZshExtras}
     '';
@@ -219,14 +222,14 @@ in
     enable = true;
     scdaemonSettings =
       { }
-      // lib.optionalAttrs pkgs.stdenvNoCC.isDarwin {
+      // lib.optionalAttrs (pkgs.stdenvNoCC.isDarwin || pkgs.stdenvNoCC.isLinux) {
         disable-ccid = true;
       };
   };
 
   neovim = {
     package = pkgs.neovim;
-    enable = true;
+    enable = !isVm;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
@@ -244,14 +247,16 @@ in
     matchBlocks = {
       "*" = {
         forwardAgent = true;
-        sendEnv = [ "LANG" "LC_*" ];
+        sendEnv = [
+          "LANG"
+          "LC_*"
+        ];
         hashKnownHosts = true;
       };
     };
-    includes = [
-      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
-    ];
+    includes =
+      lib.optionals pkgs.stdenv.hostPlatform.isLinux [ "/home/${user}/.ssh/config_external" ]
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ "/Users/${user}/.ssh/config_external" ];
   };
 
   starship = {

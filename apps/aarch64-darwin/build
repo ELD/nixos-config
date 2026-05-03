@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+set -euo pipefail
 
 GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
@@ -13,7 +14,8 @@ fi
 
 HOST=$1
 SYSTEM_TYPE="aarch64-darwin"
-FLAKE_SYSTEM="darwinConfigurations.${HOST}.system"
+FLAKE_TARGET="${HOST}@${SYSTEM_TYPE}"
+FLAKE_SYSTEM="darwinConfigurations.${FLAKE_TARGET}.system"
 
 # Shift the args so any additional ones are sent to the script
 shift 1
@@ -21,9 +23,9 @@ shift 1
 export NIXPKGS_ALLOW_UNFREE=1
 
 echo "${YELLOW}Starting build...${NC}"
-nix --extra-experimental-features 'nix-command flakes' build .#$FLAKE_SYSTEM $@
+nix --extra-experimental-features 'nix-command flakes' build ".#${FLAKE_SYSTEM}" "$@"
 
 echo "${YELLOW}Cleaning up...${NC}"
-unlink ./result
+rm -f ./result
 
 echo "${GREEN}Switch to new generation complete!${NC}"

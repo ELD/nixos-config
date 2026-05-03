@@ -37,7 +37,7 @@ in
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
       max-jobs = "auto";
-      netrc-file = "$HOME/.netrc";
+      netrc-file = "/nix/var/determinate/netrc";
     };
 
     gc = {
