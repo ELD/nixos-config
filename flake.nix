@@ -7,20 +7,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager.url = "github:nix-community/home-manager";
-    # home-manager = {
-    #   url = "github:aguirre-matteo/home-manager/fix-home-uid";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
-      url = "github:Azd325/nix-homebrew";
+      url = "github:zhaofengli/nix-homebrew";
     };
-    # nix-homebrew = {
-    #   url = "github:zhaofengli/nix-homebrew";
-    # };
     homebrew-bundle = {
       url = "github:homebrew/homebrew-bundle";
       flake = false;

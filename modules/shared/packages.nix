@@ -85,6 +85,7 @@ with pkgs;
   texliveFull
 
   # AI tools
+  codex
   opencode
 
   # Zig

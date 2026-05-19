@@ -76,7 +76,7 @@ in
       "Pixelmator Pro" = 6746662575;
 
       # Games
-      "Balatro" = 6502451661;
+      # "Balatro+" = 6502451661;
       "CivilizationVII" = 6744373452;
 
       # Productivity

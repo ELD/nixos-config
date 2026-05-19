@@ -41,6 +41,7 @@ _:
   "screenflow"
   "sensei"
   "tableplus"
+  "utm"
   "visual-studio-code"
   "zoom"
 ]
