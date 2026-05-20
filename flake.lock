@@ -193,6 +193,22 @@
         "type": "github"
       }
     },
+    "ghostty-shaders": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769248043,
+        "narHash": "sha256-2AeIjV59d/a+JdEbcPT1dLfUVdegRYIyFLI55daZ0LI=",
+        "owner": "hackr-sh",
+        "repo": "ghostty-shaders",
+        "rev": "aa6121ba2ddd5251ac75b92729c758fe41256e55",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hackr-sh",
+        "repo": "ghostty-shaders",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": "nixpkgs"
@@ -407,6 +423,7 @@
         "darwin": "darwin",
         "disko": "disko",
         "flake-utils": "flake-utils",
+        "ghostty-shaders": "ghostty-shaders",
         "home-manager": "home-manager",
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
@@ -416,6 +433,7 @@
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_3",
         "secrets": "secrets",
+        "sigmavim": "sigmavim",
         "sops-nix": "sops-nix",
         "zig": "zig"
       }
@@ -434,6 +452,22 @@
       "original": {
         "type": "git",
         "url": "ssh://git@github.com/ELD/nix-secrets.git"
+      }
+    },
+    "sigmavim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747352676,
+        "narHash": "sha256-0YdKlavzV859Pp/glOcZEXBf/zNfNOZ5jwmqheDSbDA=",
+        "ref": "refs/heads/main",
+        "rev": "73c5bb5ba309fa2b4ca26a830059bebc707d0e0b",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://git@github.com/ELD/sigmavim.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/ELD/sigmavim.git"
       }
     },
     "sops-nix": {

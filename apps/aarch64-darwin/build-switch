@@ -11,10 +11,18 @@ OTHER_ARGS=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --host=*)
-      HOSt="${1#*=}"
+      HOST="${1#*=}"
+      if [ -z "$HOST" ]; then
+        echo "${RED}Missing value for --host${NC}"
+        exit 1
+      fi
       shift
       ;;
     --host)
+      if [ -z "$2" ]; then
+        echo "${RED}Missing value for --host${NC}"
+        exit 1
+      fi
       HOST="$2"
       shift 2
       ;;

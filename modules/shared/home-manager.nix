@@ -241,11 +241,14 @@ in
   ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "*" = {
-        forwardAgent = true;
-        sendEnv = [ "LANG" "LC_*" ];
-        hashKnownHosts = true;
+        ForwardAgent = true;
+        SendEnv = [
+          "LANG"
+          "LC_*"
+        ];
+        HashKnownHosts = true;
       };
     };
     includes = [

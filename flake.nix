@@ -34,6 +34,14 @@
       url = "git+ssh://git@github.com/ELD/nix-secrets.git";
       flake = false;
     };
+    sigmavim = {
+      url = "git+ssh://git@github.com/ELD/sigmavim.git";
+      flake = false;
+    };
+    ghostty-shaders = {
+      url = "github:hackr-sh/ghostty-shaders";
+      flake = false;
+    };
     flake-utils.url = "github:numtide/flake-utils";
     neovim-nightly-overlay = {
       url = "github:nix-community/neovim-nightly-overlay";
@@ -57,6 +65,8 @@
       disko,
       sops-nix,
       secrets,
+      sigmavim,
+      ghostty-shaders,
       flake-utils,
       neovim-nightly-overlay,
       zig,
@@ -71,7 +81,6 @@
       ];
       darwinSystems = [
         "aarch64-darwin"
-        "x86_64-darwin"
       ];
       defaultSystems = linuxSystems ++ darwinSystems;
       devShell =
@@ -88,6 +97,8 @@
                 git
                 age
                 sops
+                nil
+                nixd
               ];
               shellHook = ''
                 export EDITOR=vim
@@ -125,16 +136,51 @@
           arch,
           os,
           hostname,
+          username ? user,
         }:
         {
           "${arch}-${os}" = {
             "${hostname}" =
               (if os == "darwin" then self.darwinConfigurations else self.nixosConfigurations)
               ."${hostname}@${arch}-${os}".config.system.build.toplevel;
+            "${username}-home" = self.homeConfigurations."${username}@${arch}-${os}".activationPackage;
             devShell = self.devShells."${arch}-${os}".default;
           };
         };
       overlays = import ./overlays (inputs // { inherit inputs; });
+      isDarwinSystem = system: builtins.elem system darwinSystems;
+      homePrefix = system: if isDarwinSystem system then "/Users" else "/home";
+      mkHomeConfig =
+        {
+          system,
+          username ? user,
+          extraModules ? [ ],
+        }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            inherit system overlays;
+            config = {
+              allowUnfree = true;
+              allowBroken = true;
+              allowInsecure = false;
+              allowUnsupportedSystem = true;
+              permittedInsecurePackages = [ "olm-3.2.16" ];
+            };
+          };
+          extraSpecialArgs = inputs // {
+            inherit inputs;
+          };
+          modules = [
+            ./modules/home-manager
+            {
+              home = {
+                inherit username;
+                homeDirectory = "${homePrefix system}/${username}";
+              };
+            }
+          ]
+          ++ extraModules;
+        };
     in
     {
       devShells = eachSystemMap defaultSystems devShell;
@@ -235,6 +281,15 @@
             }
             ./hosts/nixos
           ];
+        };
+      };
+
+      homeConfigurations = {
+        "${user}@aarch64-darwin" = mkHomeConfig {
+          system = "aarch64-darwin";
+        };
+        "${user}@x86_64-linux" = mkHomeConfig {
+          system = "x86_64-linux";
         };
       };
     };

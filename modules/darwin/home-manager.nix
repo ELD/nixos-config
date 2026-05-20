@@ -1,15 +1,15 @@
-{ config, pkgs, lib, home-manager, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 let
   user = "edattore";
-  # Define the content of your file as a derivation
-  sharedFiles = import ../shared/files.nix { inherit config pkgs; };
-  additionalFiles = import ./files.nix { inherit user config pkgs; };
-  mkFullPathRelativeToNixpkgs = homeDirectory: relative: "${homeDirectory}/.nixos-config/${relative}";
 in
 {
   imports = [
-   ./dock
+    ./dock
   ];
 
   # It me
@@ -23,7 +23,7 @@ in
   homebrew = {
     enable = true;
     # brews = [ "opencode" ];
-    casks = pkgs.callPackage ./casks.nix {};
+    casks = pkgs.callPackage ./casks.nix { };
     onActivation = {
       autoUpdate = true;
       upgrade = true;
@@ -93,44 +93,13 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
-    users.${user} = { pkgs, config, lib, ... }:{
+    users.${user} = {
+      imports = [
+        ../home-manager
+      ];
       home = {
-        enableNixpkgsReleaseCheck = false;
-        packages = pkgs.callPackage ./packages.nix {};
-        file = lib.mkMerge [
-          sharedFiles
-          additionalFiles
-        ];
-
-        sessionPath = [
-          "/Users/${user}/.cargo/bin"
-        ];
-
-        stateVersion = "25.11";
-      };
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
-
-      # Marked broken Oct 20, 2022 check later to remove this
-      # https://github.com/nix-community/home-manager/issues/3344
-      manual.manpages.enable = false;
-
-      xdg.configFile =
-      {
-        nvim = {
-          source =
-            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/${user}"
-              "modules/shared/config/sigmavim");
-          recursive = true;
-        };
-        ghostty = {
-          source =
-            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/${user}"
-              "modules/shared/config/ghostty");
-          recursive = true;
-        };
-        "starship.toml" = {
-          source = ../shared/config/starship.toml;
-        };
+        username = user;
+        homeDirectory = "/Users/${user}";
       };
     };
   };
