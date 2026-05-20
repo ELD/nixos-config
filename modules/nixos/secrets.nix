@@ -1,8 +1,9 @@
-{ secrets, ... }:
+_:
+# { secrets, ... }:
 
-let
-  user = "edattore";
-in
+# let
+#   user = "edattore";
+# in
 {
   sops = {
     age.keyFile = "/var/lib/sops-nix/key.txt";

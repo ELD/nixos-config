@@ -1,29 +1,22 @@
-{ config, pkgs, lib, home-manager, ... }:
+{
+  host,
+  config,
+  pkgs,
+  ...
+}:
 
 let
-  user = "edattore";
-  # Define the content of your file as a derivation
-  sharedFiles = import ../shared/files.nix { inherit config pkgs; };
-  additionalFiles = import ./files.nix { inherit user config pkgs; };
-  mkFullPathRelativeToNixpkgs = homeDirectory: relative: "${homeDirectory}/.nixos-config/${relative}";
+  user = host.username;
 in
 {
   imports = [
-   ./dock
+    ./dock
   ];
-
-  # It me
-  users.users.${user} = {
-    name = "${user}";
-    home = "/Users/${user}";
-    isHidden = false;
-    shell = pkgs.zsh;
-  };
 
   homebrew = {
     enable = true;
-    # brews = [ "opencode" ];
-    casks = pkgs.callPackage ./casks.nix {};
+    brews = [ ];
+    casks = pkgs.callPackage ./casks.nix { };
     onActivation = {
       autoUpdate = true;
       upgrade = true;
@@ -76,7 +69,7 @@ in
       "Pixelmator Pro" = 6746662575;
 
       # Games
-      # "Balatro+" = 6502451661;
+      "Balatro+" = 6502451661;
       "CivilizationVII" = 6744373452;
 
       # Productivity
@@ -85,53 +78,8 @@ in
       "Numbers" = 361304891;
       "Pages" = 361309726;
       "Slack" = 803453959;
-      # "Structured" = 0;
-      "Things" = 904280696;
-    };
-  };
-
-  # Enable home-manager
-  home-manager = {
-    useGlobalPkgs = true;
-    users.${user} = { pkgs, config, lib, ... }:{
-      home = {
-        enableNixpkgsReleaseCheck = false;
-        packages = pkgs.callPackage ./packages.nix {};
-        file = lib.mkMerge [
-          sharedFiles
-          additionalFiles
-        ];
-
-        sessionPath = [
-          "/Users/${user}/.cargo/bin"
-        ];
-
-        stateVersion = "25.11";
-      };
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
-
-      # Marked broken Oct 20, 2022 check later to remove this
-      # https://github.com/nix-community/home-manager/issues/3344
-      manual.manpages.enable = false;
-
-      xdg.configFile =
-      {
-        nvim = {
-          source =
-            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/${user}"
-              "modules/shared/config/sigmavim");
-          recursive = true;
-        };
-        ghostty = {
-          source =
-            config.lib.file.mkOutOfStoreSymlink (mkFullPathRelativeToNixpkgs "/Users/${user}"
-              "modules/shared/config/ghostty");
-          recursive = true;
-        };
-        "starship.toml" = {
-          source = ../shared/config/starship.toml;
-        };
-      };
+      # "Structured" = 1499198946;
+      # "Things" = 904280696;
     };
   };
 
@@ -143,6 +91,8 @@ in
       entries = [
         { path = "/System/Applications/Apps.app"; }
         { path = "/Applications/Ghostty.app"; }
+        { path = "/Applications/Dia.app"; }
+        { path = "/Applications/Orion.app"; }
         { path = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/"; }
         { path = "/System/Applications/Messages.app"; }
         { path = "/System/Applications/Mail.app"; }

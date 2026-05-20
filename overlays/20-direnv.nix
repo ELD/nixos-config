@@ -1,4 +1,4 @@
-final: prev: {
+_: prev: {
   direnv = prev.direnv.overrideAttrs {
     doCheck = !prev.stdenv.hostPlatform.isDarwin;
   };

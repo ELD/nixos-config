@@ -5,128 +5,56 @@ with pkgs;
   # Formatters and LSP tools
   nixfmt
 
-  # Chat tools
-  gomuks
-  iamb
-
   # Encryption/decryption tools
   age
   gnupg
   sops
 
-  # Go dev tools
-  air
-
   # Nix tools
-  attic-client
   cachix
   comma
   deadnix
   devenv
   statix
-  yubikey-manager
-
-  # JavaScript tools
-  bun
-  # NOTE: Let's only use Bun instead of installing Node since it's better
-  # nodejs_latest
-  pnpm
-  yarn
-
-  # Golang tools
-  golangci-lint
-  templ
-
-  # Java tools
-  jdk
-
-  # Lua
-  luajit
-  luajitPackages.luarocks
 
   # VM/Containers
-  colima
+  # colima
 
-  # CI/CD and Cloud
-  doctl
-  flyctl
+  # Source hosting
   gh
-  terraform
-  turso-cli
-
-  # Rust tools
-  bacon
-  cargo-nextest
-  cargo-expand
-  cargo-outdated
-  cargo-shuttle
-  cargo-sweep
-  cargo-vet
-  cargo-wipe
-  diesel-cli
-  evcxr
-  rustup
-  sqlx-cli
-  sccache
-
-  # Python tools
-  python3
-  python3Packages.pip
-  python3Packages.jupyter-core
-  python3Packages.ipython
-  python3Packages.ipykernel
-  python3Packages.fonttools
-  pylint
-  pipenv
-
-  # LaTeX/Typesetting
-  tectonic
-  typst
-  texliveFull
-
-  # AI tools
-  codex
-  opencode
-
-  # Zig
-  zigpkgs.master
 
   # General utilities
   ascii-image-converter
   chafa
   coreutils-full
   curl
-  devenv
   dust
   fastfetch
   fd
   ffmpeg
   findutils
-  fontforge
   gawk
   git
   gnugrep
   gnused
   jq
   lazygit
-  lazysql
   mdcat
   openssh
   openssl
   pkg-config
-  pre-commit
+  prek
   ranger
   ripgrep
   ripgrep-all
   tealdeer
-  tmux
+  # tmux
   tokei
   tree
   treefmt
   tree-sitter
   unzip
   wget
-  yt-dlp
   yq
-  zellij
+
 ]
