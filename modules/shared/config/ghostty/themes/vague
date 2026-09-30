@@ -1,9 +1,9 @@
 # Vague for Ghostty
 # -------------------
 # Theme Author: vague2k <ilovedrawing056@gmail.com>
-# Ported by:	skewb1k <skewb1kunix@gmail.com>
-# License:  	MIT License
-# Upstream: 	https://github.com/vague2k/vague.nvim/blob/main/extras/ghostty/vague
+# Ported by:    skewb1k <skewb1kunix@gmail.com>
+# License:      MIT License
+# Upstream:     https://github.com/vague2k/vague.nvim/blob/main/extras/ghostty/vague
 
 palette = 0=#252530
 palette = 1=#d8647e

@@ -1,41 +1,40 @@
-{ secrets, ... }:
+{ host, ... }:
 
-let
-  user = "edattore";
-  hostSecrets = "${secrets}/hosts/rhodium.yaml";
-in
-{
-  sops = {
-    age.keyFile = "/var/lib/sops-nix/key.txt";
-    defaultSopsFormat = "yaml";
+if host ? secretsFile && host.secrets.repo == "personal" then
+  {
+    sops = {
+      age.keyFile = "/var/lib/sops-nix/key.txt";
+      defaultSopsFormat = "yaml";
 
-    secrets = {
-      "mac-licenses" = {
-        sopsFile = hostSecrets;
-        key = "mac_licenses";
-        path = "/Users/${user}/mac-licenses.md";
-        mode = "0600";
-        owner = user;
-        group = "staff";
-      };
+      secrets = {
+        "mac-licenses" = {
+          sopsFile = host.secretsFile;
+          key = "mac_licenses";
+          path = "${host.homeDirectory}/mac-licenses.md";
+          mode = "0600";
+          owner = host.username;
+          group = "staff";
+        };
 
-      "netrc" = {
-        sopsFile = hostSecrets;
-        key = "netrc";
-        path = "/Users/${user}/.netrc";
-        mode = "0600";
-        owner = user;
-        group = "staff";
-      };
+        "netrc" = {
+          sopsFile = host.secretsFile;
+          key = "netrc";
+          path = "${host.homeDirectory}/.netrc";
+          mode = "0600";
+          owner = host.username;
+          group = "staff";
+        };
 
-      "openai-env" = {
-        sopsFile = hostSecrets;
-        key = "openai_env";
-        path = "/Users/${user}/.access/openai-env.sh";
-        mode = "0600";
-        owner = user;
-        group = "staff";
+        "openai-env" = {
+          sopsFile = host.secretsFile;
+          key = "openai_env";
+          path = "${host.homeDirectory}/.access/openai-env.sh";
+          mode = "0600";
+          owner = host.username;
+          group = "staff";
+        };
       };
     };
-  };
-}
+  }
+else
+  { }

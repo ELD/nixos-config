@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  inputs ? { },
+  ...
+}:
 {
 
   nixpkgs = {
@@ -12,9 +16,11 @@
   };
 
   home-manager = {
+    extraSpecialArgs = inputs // {
+      inherit inputs;
+    };
     useGlobalPkgs = true;
     useUserPackages = true;
-    backupFileExtension = "old.bak";
   };
 
   fonts = {

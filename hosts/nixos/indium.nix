@@ -1,13 +1,14 @@
 {
-  config,
-  inputs,
   pkgs,
   sops-nix,
+  host,
   ...
 }:
 
 let
-  user = "edattore";
+  inherit (host) homeDirectory;
+  user = host.username;
+  inherit (host) hostname;
   keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ];
 in
 {
@@ -16,6 +17,8 @@ in
     ../../modules/nixos/disk-config.nix
     sops-nix.nixosModules.sops
   ];
+
+  home-manager.extraSpecialArgs.host = host;
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -47,13 +50,13 @@ in
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
-    hostName = "Indium"; # Define your hostname.
+    hostName = hostname; # Define your hostname.
     useDHCP = true;
     # interfaces."%INTERFACE%".useDHCP = true;
   };
 
   nix = {
-    nixPath = [ "nixos-config=/home/${user}/.local/share/src/nixos-config:/etc/nixos" ];
+    nixPath = [ "nixos-config=${homeDirectory}/.local/share/src/nixos-config:/etc/nixos" ];
     settings = {
       allowed-users = [ "${user}" ];
       trusted-users = [
@@ -130,8 +133,8 @@ in
     syncthing = {
       enable = true;
       openDefaultPorts = true;
-      dataDir = "/home/${user}/.local/share/syncthing";
-      configDir = "/home/${user}/.config/syncthing";
+      dataDir = "${homeDirectory}/.local/share/syncthing";
+      configDir = "${homeDirectory}/.config/syncthing";
       user = "${user}";
       group = "users";
       guiAddress = "127.0.0.1:8384";
@@ -284,6 +287,7 @@ in
   users.users = {
     ${user} = {
       isNormalUser = true;
+      home = homeDirectory;
       extraGroups = [
         "wheel" # Enable ‘sudo’ for the user.
         "docker"
@@ -324,5 +328,5 @@ in
     inetutils
   ];
 
-  system.stateVersion = "25.11"; # Don't change this
+  system.stateVersion = host.stateVersion; # Keep the installed host's state version
 }

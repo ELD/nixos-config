@@ -2,14 +2,14 @@
   config,
   pkgs,
   lib,
+  host ? { },
   ...
 }:
 
 let
-  name = "Eric Dattore";
-  user = "edattore";
-  email = "eric@dattore.me";
-  fd = lib.getExe pkgs.fd;
+  name = host.name or "Eric Dattore";
+  user = config.home.username;
+  email = host.email or "eric@dattore.me";
   aliases = {
     cd = "z";
     gst = "git status";
@@ -35,14 +35,24 @@ in
     enable = true;
     enableZshIntegration = true;
   };
-  bacon = {
-    enable = true;
-  };
   bat = {
     enable = true;
     config = {
-      theme = "nord";
       color = "always";
+      theme = "auto";
+      "theme-light" = "cendre-light";
+      "theme-dark" = "cendre";
+    };
+
+    themes = {
+      cendre = {
+        src = ./config/bat;
+        file = "cendre.tmTheme";
+      };
+      cendre-light = {
+        src = ./config/bat;
+        file = "cendre-light.tmTheme";
+      };
     };
   };
   dircolors.enable = true;
@@ -55,20 +65,20 @@ in
     enableZshIntegration = true;
     icons = "auto";
   };
-  fzf = rec {
-    enable = true;
-    defaultCommand = "${fd} -H --type f";
-    defaultOptions = [ "--height 50%" ];
-    fileWidgetCommand = "${defaultCommand}";
-    fileWidgetOptions = [
-      "--preview '${lib.getExe pkgs.bat} --color=always --plain --line-range=:200 {}'"
-    ];
-    changeDirWidgetCommand = "${fd} -H --type d";
-    changeDirWidgetOptions = [
-      "--preview '${pkgs.tree}/bin/tree -C {} | head -200'"
-    ];
-    historyWidgetOptions = [ ];
-  };
+  # fzf = rec {
+  #   enable = true;
+  #   defaultCommand = "${fd} -H --type f";
+  #   defaultOptions = [ "--height 50%" ];
+  #   fileWidget.command = "${defaultCommand}";
+  #   fileWidget.options = [
+  #     "--preview '${lib.getExe pkgs.bat} --color=always --plain --line-range=:200 {}'"
+  #   ];
+  #   changeDirWidget.command = "${fd} -H --type d";
+  #   changeDirWidget.options = [
+  #     "--preview '${pkgs.tree}/bin/tree -C {} | head -200'"
+  #   ];
+  #   historyWidget.options = [ ];
+  # };
   go = {
     enable = true;
     env = {
@@ -84,6 +94,10 @@ in
     enableZshIntegration = true;
   };
   yt-dlp.enable = true;
+  zellij = {
+    enable = true;
+    extraConfig = builtins.readFile ./config/zellij/config.kdl;
+  };
   zoxide = {
     enable = true;
     enableZshIntegration = true;
@@ -98,7 +112,7 @@ in
     localVariables = {
       LANG = "en_US.UTF-8";
       GPG_TTY = "/dev/ttys000";
-      DEFAULT_USER = "${config.home.username}";
+      DEFAULT_USER = "${user}";
       CLICOLOR = 1;
       LS_COLORS = "ExFxBxDxCxegedabagacad";
       # TERM = "xterm-256color";
@@ -175,7 +189,6 @@ in
         editor = "vim";
         autocrlf = "input";
       };
-      commit.gpgsign = true;
       commit.verbose = true;
       pull.rebase = true;
       rebase.autoStash = true;
@@ -196,10 +209,6 @@ in
       ".idea/*"
       ".vscode/"
     ];
-    signing = {
-      key = "0x26CCB5CE8AE20CE0";
-      signByDefault = true;
-    };
     lfs = {
       enable = true;
     };
@@ -219,7 +228,7 @@ in
     enable = true;
     scdaemonSettings =
       { }
-      // lib.optionalAttrs pkgs.stdenvNoCC.isDarwin {
+      // lib.optionalAttrs pkgs.stdenvNoCC.hostPlatform.isDarwin {
         disable-ccid = true;
       };
   };
@@ -241,16 +250,19 @@ in
   ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "*" = {
-        forwardAgent = true;
-        sendEnv = [ "LANG" "LC_*" ];
-        hashKnownHosts = true;
+        ForwardAgent = false;
+        SendEnv = [
+          "LANG"
+          "LC_*"
+        ];
+        HashKnownHosts = true;
       };
     };
     includes = [
-      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "/home/${user}/.ssh/config_external")
-      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "/Users/${user}/.ssh/config_external")
+      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux "${config.home.homeDirectory}/.ssh/config_external")
+      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin "${config.home.homeDirectory}/.ssh/config_external")
     ];
   };
 

@@ -1,30 +1,92 @@
 name: Auto Update Flake Inputs
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * 1" # Core Nix inputs, Monday
+    - cron: "0 0 * * 3" # Homebrew, Wednesday
+    - cron: "0 0 * * 5" # Developer tools, Friday
   workflow_dispatch:
+    inputs:
+      group:
+        description: Input group to update
+        required: true
+        type: choice
+        options:
+          - core
+          - homebrew
+          - tools
+
+# Serialize all groups: they each edit flake.lock and open PRs against main.
+concurrency:
+  group: flake-input-updates
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          submodules: recursive
+          ssh-key: ${{ secrets.GHA_DK }}
+      - name: Select input group
+        id: group
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          REQUESTED_GROUP: ${{ inputs.group }}
+        run: |
+          if [[ "$EVENT_NAME" == workflow_dispatch ]]; then
+            group="$REQUESTED_GROUP"
+          else
+            case "$SCHEDULE" in
+              '0 0 * * 1') group=core ;;
+              '0 0 * * 3') group=homebrew ;;
+              '0 0 * * 5') group=tools ;;
+              *) echo "Unknown schedule: $SCHEDULE" >&2; exit 1 ;;
+            esac
+          fi
+          echo "name=$group" >> "$GITHUB_OUTPUT"
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v22
+        uses: DeterminateSystems/determinate-nix-action@v3.22.5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.GHA_DK }}
-      - name: Setup SSH Key
-        uses: webfactory/ssh-agent@v0.10.0
-        with:
-          ssh-private-key: ${{ secrets.GHA_DK }}
-      - name: Update flake.lock
-        uses: DeterminateSystems/update-flake-lock@v28
+          extra-conf: lazy-trees = true
+      - name: Update selected inputs
+        env:
+          GROUP: ${{ steps.group.outputs.name }}
+        run: |
+          case "$GROUP" in
+            core)
+              inputs=(nixpkgs home-manager darwin sops-nix disko flake-utils)
+              ;;
+            homebrew)
+              inputs=(nix-homebrew homebrew-bundle homebrew-core homebrew-cask)
+              ;;
+            tools)
+              inputs=(ghostty-shaders neovim-nightly-overlay zig llm-agents)
+              ;;
+            *) echo "Unknown input group: $GROUP" >&2; exit 1 ;;
+          esac
+          nix flake update "${inputs[@]}"
+      - name: Check updated lock file
+        run: nix flake check --all-systems --no-build --no-write-lock-file
+      - name: Open update pull request
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          pr-title: "Update flake.lock"
-          pr-labels: |
+          base: main
+          branch: automated/flake-${{ steps.group.outputs.name }}
+          delete-branch: true
+          add-paths: flake.lock
+          commit-message: "flake.lock: Update ${{ steps.group.outputs.name }} inputs"
+          title: "Update ${{ steps.group.outputs.name }} flake inputs"
+          labels: |
             automated
             dependencies
+          body: |
+            Updates the ${{ steps.group.outputs.name }} input group.
+            `nix flake check --all-systems --no-build --no-write-lock-file` passed before opening this PR.

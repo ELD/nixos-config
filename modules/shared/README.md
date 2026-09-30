@@ -1,16 +1,16 @@
-## Shared
-Much of the code running on MacOS or NixOS is actually found here.
+# Shared configuration
 
-This configuration gets imported by both modules. Some configuration examples include `git`, `zsh`, `vim`, and `tmux`.
+This directory contains configuration used by both full host configurations and the standalone Home Manager output.
 
 ## Layout
-```
-.
-├── config             # Config files not written in Nix
-├── cachix             # Defines cachix, a global cache for builds
-├── default.nix        # Defines how we import overlays 
-├── files.nix          # Non-Nix, static configuration files (now immutable!)
-├── home-manager.nix   # The goods; most all shared config lives here
-├── packages.nix       # List of packages to share
 
+```text
+.
+├── config/           # Source assets and the editable Neovim/Ghostty trees
+├── default.nix       # Shared system options and fonts
+├── files.nix         # Nix-managed shared files
+├── home-manager.nix  # Shared user programs and shell configuration
+└── packages.nix      # Packages common to both platforms
 ```
+
+Most files declared here are generated as immutable Nix-store links. Edit the source in the checkout and activate a new generation. The optional `-editable` standalone Home Manager outputs instead link Neovim and Ghostty config to `~/.nixos-config/modules/shared/config/...` for live editing; see the root README.

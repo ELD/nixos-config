@@ -1,0 +1,29 @@
+# Machine identities and profile selection. Host hardware lives in Nix modules.
+# Secrets are opt-in: add [hosts.<name>.secrets] with repo and file, then
+# override only that repo's flake input (see README).
+[users.edattore]
+name = "Eric Dattore"
+email = "eric@dattore.me"
+homeStateVersion = "26.11"
+
+[hosts.rhodium]
+platform = "darwin"
+system = "aarch64-darwin"
+username = "edattore"
+hostname = "Rhodium"
+stateVersion = 7
+homeDirectory = "/Users/edattore"
+profiles = ["personal", "development"]
+legacyHome = true
+editableHome = true
+
+[hosts.indium]
+platform = "nixos"
+system = "x86_64-linux"
+username = "edattore"
+hostname = "Indium"
+stateVersion = "26.11"
+homeDirectory = "/home/edattore"
+profiles = ["desktop", "development"]
+legacyHome = true
+editableHome = true

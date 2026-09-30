@@ -35,10 +35,7 @@ else
 
   case "$SYSTEM" in
     x86_64)
-      FLAKE_TARGET="x86_64-linux"
-      ;;
-    aarch64)
-      FLAKE_TARGET="aarch64-linux"
+      FLAKE_TARGET="indium@x86_64-linux"
       ;;
     *)
       echo -e "${RED}Unsupported architecture: $SYSTEM${NC}"

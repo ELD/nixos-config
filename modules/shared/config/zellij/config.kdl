@@ -1,0 +1,148 @@
+// Start in passthrough mode. Ctrl-g is the only key that enters Zellij.
+default_mode "locked"
+
+// Keep the tab UI to one compact row and show pane titles without full borders.
+default_layout "compact"
+pane_frames true
+pane_frame_style "titles"
+
+show_startup_tips false
+
+keybinds clear-defaults=true {
+    locked {
+        bind "Ctrl g" { SwitchToMode "Normal"; }
+    }
+
+    shared {
+      bind "Ctrl Alt Super k" { Clear; Write 10; }
+    }
+
+    normal {
+        // Ctrl-g Ctrl-g sends a literal Ctrl-g to the focused pane.
+        bind "Ctrl g" { Write 7; SwitchToMode "Locked"; }
+
+        // Pane focus and creation.
+        bind "h" { MoveFocus "Left"; SwitchToMode "Locked"; }
+        bind "j" { MoveFocus "Down"; SwitchToMode "Locked"; }
+        bind "k" { MoveFocus "Up"; SwitchToMode "Locked"; }
+        bind "l" { MoveFocus "Right"; SwitchToMode "Locked"; }
+        bind "Tab" { FocusNextPane; SwitchToMode "Locked"; }
+        bind ";" { FocusLastPane; SwitchToMode "Locked"; }
+        bind "n" { NewPane; SwitchToMode "Locked"; }
+        bind "d" { NewPane "Down"; SwitchToMode "Locked"; }
+        bind "v" { NewPane "Right"; SwitchToMode "Locked"; }
+        bind "x" { CloseFocus; SwitchToMode "Locked"; }
+
+        // Tabs.
+        bind "t" { NewTab; SwitchToMode "Locked"; }
+        bind "[" { GoToPreviousTab; SwitchToMode "Locked"; }
+        bind "]" { GoToNextTab; SwitchToMode "Locked"; }
+        bind "1" { GoToTab 1; SwitchToMode "Locked"; }
+        bind "2" { GoToTab 2; SwitchToMode "Locked"; }
+        bind "3" { GoToTab 3; SwitchToMode "Locked"; }
+        bind "4" { GoToTab 4; SwitchToMode "Locked"; }
+        bind "5" { GoToTab 5; SwitchToMode "Locked"; }
+        bind "6" { GoToTab 6; SwitchToMode "Locked"; }
+        bind "7" { GoToTab 7; SwitchToMode "Locked"; }
+        bind "8" { GoToTab 8; SwitchToMode "Locked"; }
+        bind "9" { GoToTab 9; SwitchToMode "Locked"; }
+        bind "r" { SwitchToMode "RenameTab"; TabNameInput 0; }
+        bind "Shift x" { CloseTab; SwitchToMode "Locked"; }
+
+        // Resizing, pane movement, and display modes.
+        bind "=" { SwitchToMode "Resize"; }
+        bind "m" { SwitchToMode "Move"; }
+        bind "f" { ToggleFocusFullscreen; SwitchToMode "Locked"; }
+        bind "Shift f" { ToggleFocusNoUiFullscreen; SwitchToMode "Locked"; }
+        bind "w" { ToggleFloatingPanes; SwitchToMode "Locked"; }
+        bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Locked"; }
+        bind "Shift r" { SwitchToMode "RenamePane"; PaneNameInput 0; }
+
+        // Scrollback, session management, and layout controls.
+        bind "s" { SwitchToMode "Scroll"; }
+        bind "o" {
+            LaunchOrFocusPlugin "zellij:session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "Locked"
+        }
+        bind "D" { Detach; }
+        bind "Space" { NextSwapLayout; SwitchToMode "Locked"; }
+        bind "Esc" { SwitchToMode "Locked"; }
+    }
+
+    resize {
+        bind "h" "Left" { Resize "Increase Left"; SwitchToMode "Locked"; }
+        bind "j" "Down" { Resize "Increase Down"; SwitchToMode "Locked"; }
+        bind "k" "Up" { Resize "Increase Up"; SwitchToMode "Locked"; }
+        bind "l" "Right" { Resize "Increase Right"; SwitchToMode "Locked"; }
+        bind "H" { Resize "Decrease Left"; SwitchToMode "Locked"; }
+        bind "J" { Resize "Decrease Down"; SwitchToMode "Locked"; }
+        bind "K" { Resize "Decrease Up"; SwitchToMode "Locked"; }
+        bind "L" { Resize "Decrease Right"; SwitchToMode "Locked"; }
+        bind "=" "+" { Resize "Increase"; SwitchToMode "Locked"; }
+        bind "-" { Resize "Decrease"; SwitchToMode "Locked"; }
+        bind "Esc" { SwitchToMode "Locked"; }
+    }
+
+    move {
+        bind "h" "Left" { MovePane "Left"; SwitchToMode "Locked"; }
+        bind "j" "Down" { MovePane "Down"; SwitchToMode "Locked"; }
+        bind "k" "Up" { MovePane "Up"; SwitchToMode "Locked"; }
+        bind "l" "Right" { MovePane "Right"; SwitchToMode "Locked"; }
+        bind "n" "Tab" { MovePane; SwitchToMode "Locked"; }
+        bind "p" { MovePaneBackwards; SwitchToMode "Locked"; }
+        bind "Esc" { SwitchToMode "Locked"; }
+    }
+
+    scroll {
+        bind "j" "Down" { ScrollDown; SwitchToMode "Locked"; }
+        bind "k" "Up" { ScrollUp; SwitchToMode "Locked"; }
+        bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; SwitchToMode "Locked"; }
+        bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; SwitchToMode "Locked"; }
+        bind "d" { HalfPageScrollDown; SwitchToMode "Locked"; }
+        bind "u" { HalfPageScrollUp; SwitchToMode "Locked"; }
+        bind "s" { SwitchToMode "EnterSearch"; SearchInput 0; }
+        bind "e" { EditScrollback; SwitchToMode "Locked"; }
+        bind "c" { Copy; SwitchToMode "Locked"; }
+        bind "Shift c" { CopyLastCommandOutput; SwitchToMode "Locked"; }
+        bind "[" { ScrollToPreviousPrompt; SwitchToMode "Locked"; }
+        bind "]" { ScrollToNextPrompt; SwitchToMode "Locked"; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "Locked"; }
+        bind "Esc" { SwitchToMode "Locked"; }
+    }
+
+    entersearch {
+        bind "Enter" { SwitchToMode "Search"; }
+        bind "Esc" "Ctrl c" { SwitchToMode "Locked"; }
+    }
+
+    search {
+        bind "n" { Search "down"; SwitchToMode "Locked"; }
+        bind "p" { Search "up"; SwitchToMode "Locked"; }
+        bind "c" { SearchToggleOption "CaseSensitivity"; SwitchToMode "Locked"; }
+        bind "w" { SearchToggleOption "Wrap"; SwitchToMode "Locked"; }
+        bind "o" { SearchToggleOption "WholeWord"; SwitchToMode "Locked"; }
+        bind "j" "Down" { ScrollDown; SwitchToMode "Locked"; }
+        bind "k" "Up" { ScrollUp; SwitchToMode "Locked"; }
+        bind "Ctrl f" "PageDown" "Right" "l" { PageScrollDown; SwitchToMode "Locked"; }
+        bind "Ctrl b" "PageUp" "Left" "h" { PageScrollUp; SwitchToMode "Locked"; }
+        bind "d" { HalfPageScrollDown; SwitchToMode "Locked"; }
+        bind "u" { HalfPageScrollUp; SwitchToMode "Locked"; }
+        bind "[" { ScrollToPreviousPrompt; SwitchToMode "Locked"; }
+        bind "]" { ScrollToNextPrompt; SwitchToMode "Locked"; }
+        bind "Ctrl c" { ScrollToBottom; SwitchToMode "Locked"; }
+        bind "Esc" { SwitchToMode "Locked"; }
+    }
+
+    renametab {
+        bind "Enter" { SwitchToMode "Locked"; }
+        bind "Esc" "Ctrl c" { UndoRenameTab; SwitchToMode "Locked"; }
+    }
+
+    renamepane {
+        bind "Enter" { SwitchToMode "Locked"; }
+        bind "Esc" "Ctrl c" { UndoRenamePane; SwitchToMode "Locked"; }
+    }
+}
