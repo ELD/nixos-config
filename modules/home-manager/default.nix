@@ -25,27 +25,15 @@ let
     else
       config.lib.file.mkOutOfStoreSymlink "${editableRoot}/${relative}";
 
-  # Git flakes do not include submodule contents by default. Use the pinned input
-  # for the portable config, excluding its README link to a local Nix store.
-  nvimSource = builtins.path {
-    path = inputs.sigmavim;
-    name = "sigmavim";
-    filter =
-      path: type:
-      let
-        name = builtins.baseNameOf path;
-      in
-      type != "symlink" && name != ".git" && name != ".DS_Store" && !(lib.hasSuffix ".old.bak" name);
-  };
 in
 {
-  imports = [ ];
+  imports = [ "${inputs.azithro}/nix/home-manager.nix" ];
 
   options.local.editableConfigRoot = lib.mkOption {
     type = lib.types.nullOr lib.types.str;
     default = null;
     example = "/Users/edattore/workspace/nix/nixos-config";
-    description = "Checkout root for live-editable Neovim and Ghostty links; null uses flake sources.";
+    description = "Checkout root for live-editable Ghostty links; null uses flake sources. Neovim uses programs.azithro.editableConfigPath independently.";
   };
 
   config = {
@@ -65,21 +53,27 @@ in
       stateVersion = host.homeStateVersion or "26.11";
     };
 
-    programs = import ../shared/home-manager.nix {
-      inherit
-        inputs
-        config
-        pkgs
-        lib
-        host
-        ;
-    };
+    programs =
+      (import ../shared/home-manager.nix {
+        inherit
+          inputs
+          config
+          pkgs
+          lib
+          host
+          ;
+      })
+      // {
+        azithro = {
+          enable = true;
+          configSource = inputs.azithro;
+        };
+      };
 
     # NOTE: Disable these universally to avoid a warning
     manual.manpages.enable = false;
 
     xdg.configFile = {
-      nvim.source = sourceFor "modules/shared/config/sigmavim" nvimSource;
       "ghostty/config" = {
         source = sourceFor "modules/shared/config/ghostty/config" ../shared/config/ghostty/config;
         force = true;

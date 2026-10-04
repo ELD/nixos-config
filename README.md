@@ -69,7 +69,7 @@ file = "hosts/rhodium.yaml"
 
 Then supply **only** that input when evaluating/building, e.g. `nix flake check --no-build --no-write-lock-file --override-input personal-secrets 'git+ssh://git@github.com/ELD/nix-secrets.git'`. Use `work-secrets` and `repo = "work"` for a work host, with its own repository, ciphertext file, key policy, and SOPS declarations. The work profile defaults to a separate `/var/lib/sops-nix/work-key.txt`; confirm its location and recipients with your employer before enabling secrets. The configured profile must match the repo; a missing file is an evaluation error. Rhodium's `modules/darwin/secrets.nix` declares its existing personal keys when opted in; the work module only provides a SOPS default file, **not** invented employer secret names. Do not commit override URLs or private revisions to `flake.lock` (use `--no-write-lock-file`); never put plaintext credentials in this flake.
 
-These slots separate input contents and prevent an unconditional personal fetch, but are not a hard security boundary if you override both in one invocation. For strict isolation use separate wrapper flakes/accounts and distinct decryption keys. The sigmavim checkout submodule has a separate SSH dependency.
+These slots separate input contents and prevent an unconditional personal fetch, but are not a hard security boundary if you override both in one invocation. For strict isolation use separate wrapper flakes/accounts and distinct decryption keys. The legacy SigmaVim submodule still has a separate SSH dependency until it is retired; it no longer supplies the Neovim configuration.
 
 ## Build, check, and switch
 
@@ -97,7 +97,7 @@ For standalone Home Manager, install/use the Home Manager CLI and run the output
 ```sh
 home-manager switch --flake '.#edattore@aarch64-darwin' # store-backed
 home-manager switch --flake '.#edattore@x86_64-linux'   # store-backed
-# For live-editable Neovim/Ghostty files, clone at ~/.nixos-config and use:
+# For live-editable Neovim/Ghostty files, prepare the checkouts below and use:
 home-manager switch --flake '.#edattore-editable@aarch64-darwin'
 home-manager switch --flake '.#edattore-editable@x86_64-linux'
 ```
@@ -108,9 +108,36 @@ CI runs `nix flake check` on Linux and macOS. The flake also exposes a `formatte
 
 By default, Home Manager files come from the flake source in the Nix store. Edit this repository and activate a new generation; do not edit generated files in `~/.config`.
 
-The `-editable` outputs set `local.editableConfigRoot` to `~/.nixos-config`. With those outputs, `~/.config/nvim`, `~/.config/ghostty/config`, and `~/.config/ghostty/themes` point into the checkout and can be edited live. For a different checkout location, change `local.editableConfigRoot` in an `extraModules` entry for your own Home Manager output. Full host configurations use the store-backed default unless you set the option for their Home Manager user too.
+The `-editable` outputs set `local.editableConfigRoot` to `~/.nixos-config` for Ghostty's config/themes. Neovim is independent: `programs.azithro.editableConfigPath` points to `~/.nixos-config/checkouts/azithro`. Both paths are derived from the host home directory, not a Darwin/Linux-specific prefix. Override either option separately for another layout; changing Ghostty's root does not move Azithro. Full host configurations use the store-backed defaults unless their Home Manager user sets these options too.
 
-Neovim is a submodule, so commit changes there separately. Git flakes omit submodule contents by default, so the store-backed output uses a separate `sigmavim` flake input pinned to the submodule's commit. When updating the submodule, update that revision in `flake.nix` and regenerate `flake.lock` too. The store-backed source filters out its tracked README symlink to a local Nix-store generation. Ghostty shaders come from a pinned flake input in both modes.
+Azithro is an independent Git repository, not a new submodule. The nested editable checkout is ignored by this repository. On another machine, prepare it before using an editable output:
+
+```sh
+mkdir -p ~/.nixos-config/checkouts
+git clone https://github.com/ELD/azithro.git ~/.nixos-config/checkouts/azithro
+# Alternatively, if that destination is absent, link an existing Azithro checkout:
+# ln -s /absolute/path/to/azithro ~/.nixos-config/checkouts/azithro
+```
+
+Store-backed outputs use the `azithro` non-flake input pinned by `flake.lock`; editable outputs use the local runtime files but still import the Home Manager module from that pinned input. Local edits to the Nix module therefore need an explicit input override or publication/lock update to take effect. Commit/push Azithro changes separately, then update this flake's input. Ghostty shaders remain pinned in both modes.
+
+### Azithro publication and cutover
+
+The wiring is prepared ahead of publication. `flake.lock` has deliberately not been regenerated yet: it still contains the old SigmaVim entry and does not pin Azithro. Normal evaluation/builds cannot be relied on until a reachable Azithro revision is published and the lock is updated:
+
+```sh
+cd ~/.nixos-config
+nix flake update azithro
+# Review/commit flake.lock; then evaluate/build the intended host/Home Manager outputs.
+```
+
+The developer-tools update workflow now includes `azithro`. It updates the config input, not the plugin manifest itself. Neovim must provide `packlockfile` (compatible Neovim 0.13+ nightly); the existing nightly overlay/package selection is preserved.
+
+Nix owns the config and external tools; ZPack/native `vim.pack` owns plugins. Editable mode writes the checkout's tracked `nvim-pack-lock.json`. Store-backed mode seeds a writable state lock once and preserves subsequent updates. Use `:AzithroLockExport[!]` to export changes to a writable checkout; use `:AzithroLockRefresh[!]`, **restart**, then `:ZPack restore` to adopt the deployed manifest. A Nix rollback alone does not roll back mutable plugins. See Azithro's `NIX-READINESS.md` and `nix/README.md` for validation and activation gates; no activation has been performed by this wiring change.
+
+### Retiring SigmaVim
+
+The old `modules/shared/config/sigmavim` submodule, `.gitmodules` entry and checkout SSH credentials are intentionally retained while its working tree contains uncommitted work. It is no longer imported or deployed. After recovering/committing that work and validating Azithro, retire the gitlink and `.gitmodules` registration in a separate reviewed change. Then remove recursive submodule checkout and the `GHA_DK` dependency from CI if no other submodules need them. Do not delete or deinitialize the dirty checkout during cutover preparation.
 
 SSH agent forwarding is off by default. For a host that needs it, use `ssh -A host` for that connection or add a named `Host` entry with `ForwardAgent yes` in `~/.ssh/config_external`. Do not enable it for `Host *`.
 
@@ -119,7 +146,7 @@ SSH agent forwarding is off by default. For a host that needs it, use `ssh -A ho
 There is no supported one-command installer. The old `apply` scripts were removed because they rewrote files indiscriminately and expected an obsolete flake layout. For a new or recovered machine:
 
 1. Install Nix with flakes enabled, then clone this repository with its submodules, for example:
-   `git clone --recurse-submodules git@github.com:ELD/nixos-config.git ~/.nixos-config`. Choose any location for store-backed Home Manager outputs; the `-editable` outputs use `~/.nixos-config`.
+   `git clone git@github.com:ELD/nixos-config.git ~/.nixos-config`. Initialize the legacy SigmaVim submodule only if you need it. Choose any location for store-backed Home Manager outputs; the `-editable` outputs use `~/.nixos-config` and require the separate Azithro checkout described above.
 2. If enabling personal secrets, confirm SSH access to the personal secrets repository and initialize the YubiKey/GPG and sops setup. A default build needs no secrets-repo access.
 3. Only when opting into personal secrets, restore `/var/lib/sops-nix/key.txt` before activating the host; work defaults to a different key file (see above). Indium currently declares no sops secrets.
 4. Run `nix flake check`, build the target, and then use the native switch command above.
@@ -128,7 +155,7 @@ For a fresh NixOS install, `modules/nixos/disk-config.nix` still contains `/dev/
 
 ## CI credentials and updates
 
-- `GHA_DK` is an SSH private key used by Actions checkout for the sigmavim submodule. Default flake checks do not access a secrets repository. Grant it read-only access; GitHub deploy keys cannot be shared between repositories. Eric alone rotates this key by adding a replacement public key, updating the Actions secret, verifying CI, and revoking the old key. Never commit the private key.
+- `GHA_DK` is an SSH private key still used by Actions checkout for the legacy SigmaVim submodule; remove that requirement as part of the separate retirement change. Default flake checks do not access a secrets repository. Grant it read-only access; GitHub deploy keys cannot be shared between repositories. Eric alone rotates this key by adding a replacement public key, updating the Actions secret, verifying CI, and revoking the old key. Never commit the private key.
 - `REPO_ACCESS_TOKEN` is a fine-grained token for the update workflow to push its branch and open/label a PR. Grant repository Contents, Pull requests, and Issues read/write access. It is separate from `GITHUB_TOKEN` so the resulting PR can run checks.
 
 Checks run for pushes and pull requests on Linux and macOS. Scheduled input updates run Monday (core), Wednesday (Homebrew), and Friday (developer tools); the same groups can be selected with `workflow_dispatch`. The updater tests each new lock file before opening an independent PR. If two PRs change `flake.lock`, re-run or rebase the second after the first merges.
