@@ -32,6 +32,12 @@ jobs:
           ref: main
           submodules: recursive
           ssh-key: ${{ secrets.GHA_DK }}
+          persist-credentials: false
+      # Keep the deploy key read-only; the PR action authenticates pushes with its token.
+      - name: Use HTTPS for update branch pushes
+        env:
+          REPOSITORY_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: git remote set-url origin "$REPOSITORY_URL.git"
       - name: Select input group
         id: group
         env:
@@ -67,7 +73,7 @@ jobs:
               inputs=(nix-homebrew homebrew-bundle homebrew-core homebrew-cask)
               ;;
             tools)
-              inputs=(ghostty-shaders neovim-nightly-overlay zig llm-agents)
+              inputs=(azithro ghostty-shaders neovim-nightly-overlay zig llm-agents)
               ;;
             *) echo "Unknown input group: $GROUP" >&2; exit 1 ;;
           esac
