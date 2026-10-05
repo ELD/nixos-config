@@ -47,9 +47,9 @@
       url = "github:hackr-sh/ghostty-shaders";
       flake = false;
     };
-    # Keep this revision in sync with the sigmavim submodule gitlink.
-    sigmavim = {
-      url = "github:ELD/sigmavim/2f8c4b05fc6f71dd6a2a345a574b7ca2c184c560";
+    # Publish Azithro, then run `nix flake update azithro` to pin its revision.
+    azithro = {
+      url = "github:ELD/azithro";
       flake = false;
     };
     flake-utils.url = "github:numtide/flake-utils";
@@ -318,7 +318,10 @@
           ]
           ++ profileModulesFor "home" host
           ++ lib.optionals editable [
-            { local.editableConfigRoot = "${host.homeDirectory}/.nixos-config"; }
+            {
+              local.editableConfigRoot = "${host.homeDirectory}/.nixos-config";
+              programs.azithro.editableConfigPath = "${host.homeDirectory}/.nixos-config/checkouts/azithro";
+            }
           ];
         };
       mkDarwin =
