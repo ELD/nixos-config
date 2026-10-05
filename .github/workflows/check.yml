@@ -25,7 +25,7 @@ jobs:
       - name: Check Nix flake inputs
         uses: DeterminateSystems/flake-checker-action@v14
       - name: Install Determinate Nix with lazy trees enabled
-        uses: DeterminateSystems/determinate-nix-action@v3.22.5
+        uses: DeterminateSystems/determinate-nix-action@v3.23.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           extra-conf: lazy-trees = true
