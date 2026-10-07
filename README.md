@@ -121,9 +121,9 @@ git clone https://github.com/ELD/azithro.git ~/.nixos-config/checkouts/azithro
 
 Store-backed outputs use the `azithro` non-flake input pinned by `flake.lock`; editable outputs use the local runtime files but still import the Home Manager module from that pinned input. Local edits to the Nix module therefore need an explicit input override or publication/lock update to take effect. Commit/push Azithro changes separately, then update this flake's input. Ghostty shaders remain pinned in both modes.
 
-### Azithro publication and cutover
+### Updating Azithro
 
-The wiring is prepared ahead of publication. `flake.lock` has deliberately not been regenerated yet: it still contains the old SigmaVim entry and does not pin Azithro. Normal evaluation/builds cannot be relied on until a reachable Azithro revision is published and the lock is updated:
+`flake.lock` pins Azithro to `e28756de7e391f59740f19934d2a30eb93571e91`; the old SigmaVim input has been removed. To upgrade to the latest published Azithro revision:
 
 ```sh
 cd ~/.nixos-config
@@ -133,7 +133,7 @@ nix flake update azithro
 
 The developer-tools update workflow now includes `azithro`. It updates the config input, not the plugin manifest itself. Neovim must provide `packlockfile` (compatible Neovim 0.13+ nightly); the existing nightly overlay/package selection is preserved.
 
-Nix owns the config and external tools; ZPack/native `vim.pack` owns plugins. Editable mode writes the checkout's tracked `nvim-pack-lock.json`. Store-backed mode seeds a writable state lock once and preserves subsequent updates. Use `:AzithroLockExport[!]` to export changes to a writable checkout; use `:AzithroLockRefresh[!]`, **restart**, then `:ZPack restore` to adopt the deployed manifest. A Nix rollback alone does not roll back mutable plugins. See Azithro's `NIX-READINESS.md` and `nix/README.md` for validation and activation gates; no activation has been performed by this wiring change.
+Nix owns the config and external tools; ZPack/native `vim.pack` owns plugins. Editable mode writes the checkout's tracked `nvim-pack-lock.json`. Store-backed mode seeds a writable lock under `~/.local/state/nvim` once and preserves subsequent updates. The managed wrapper uses `NVIM_APPNAME=nvim`. Use `:AzithroLockExport[!]` to export changes to a writable checkout; use `:AzithroLockRefresh[!]`, **restart**, then `:ZPack restore` to adopt the deployed manifest. A Nix rollback alone does not roll back mutable plugins. See Azithro's `NIX-READINESS.md` and `nix/README.md` for validation and activation gates; no activation has been performed by this wiring change.
 
 ### Retiring SigmaVim
 

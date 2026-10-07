@@ -1,5 +1,9 @@
 name: Check Nix Flake
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 concurrency:
   group: check-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
@@ -31,6 +35,48 @@ jobs:
           extra-conf: lazy-trees = true
       # - name: Use FlakeHub Cache
       #   uses: DeterminateSystems/flakehub-cache-action@main
+      - name: Record runner and Nix diagnostics; plan native checks
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          {
+            echo "Runner OS: $(uname -s)"
+            echo "Runner architecture: $(uname -m)"
+            nix --version
+            echo "Configured substituters:"
+            nix show-config | grep '^substituters ='
+          } 2>&1 | tee nix-runner-diagnostics.txt
+
+          nix_flags=(--show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure)
+          native_system="$(nix eval "${nix_flags[@]}" --no-write-lock-file --raw --expr 'builtins.currentSystem' 2>nix-native-system.stderr)"
+          native_system_status=$?
+          if [ -s nix-native-system.stderr ]; then
+            cat nix-native-system.stderr | tee -a nix-runner-diagnostics.txt
+          fi
+          if [ "$native_system_status" -ne 0 ] || [ -z "$native_system" ]; then
+            echo "Could not determine native Nix system; skipping dry-run plan." | tee -a nix-runner-diagnostics.txt
+            exit 0
+          fi
+          echo "Native Nix system: $native_system" | tee -a nix-runner-diagnostics.txt
+
+          checks_json="$(nix eval "${nix_flags[@]}" --no-write-lock-file --json --apply builtins.attrNames ".#checks.${native_system}" 2>nix-check-plan-eval.stderr)"
+          if [ $? -ne 0 ]; then
+            cat nix-check-plan-eval.stderr
+            echo "Could not evaluate native check names; skipping dry-run plan." | tee -a nix-runner-diagnostics.txt
+            exit 0
+          fi
+          check_names="$(python3 -c 'import json, sys; print(" ".join(json.load(sys.stdin)))' <<< "$checks_json")"
+          installables=()
+          for check_name in $check_names; do
+            installables+=(".#checks.${native_system}.${check_name}")
+          done
+          if [ ${#installables[@]} -gt 0 ]; then
+            echo "Native check dry-run installables: ${installables[*]}"
+            nix build --dry-run --no-write-lock-file --no-link "${installables[@]}" "${nix_flags[@]}" 2>&1 | tee nix-check-dry-run.txt
+          else
+            echo "No checks found for native Nix system $native_system." | tee nix-check-dry-run.txt
+          fi
       - name: Free Disk Space (Linux)
         if: matrix.platform.name == 'Linux'
         run: |
@@ -49,4 +95,54 @@ jobs:
           sudo docker image prune --all --force
           df -h
       - name: Check Nix Flake
-        run: nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure -L --log-format internal-json \
+            2>&1 \
+            | python3 -u -c 'import datetime, json, sys
+          for line in sys.stdin:
+              event = {
+                  "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+                  "message": line.rstrip("\n"),
+              }
+              print(json.dumps(event, ensure_ascii=False), flush=True)
+          ' \
+            | tee nix-check.events.jsonl
+          pipeline_status=("${PIPESTATUS[@]}")
+          nix_status=${pipeline_status[0]}
+          printf '%s\n' "$nix_status" > nix-check-exit-code.txt
+          if [ "$nix_status" -ne 0 ]; then
+            exit "$nix_status"
+          fi
+          if [ "${pipeline_status[1]}" -ne 0 ] || [ "${pipeline_status[2]}" -ne 0 ]; then
+            echo "Nix event logging failed (filter=${pipeline_status[1]}, tee=${pipeline_status[2]})." >&2
+            exit 1
+          fi
+      - name: Summarize Nix build timings
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          python3 scripts/nix-build-timings.py \
+            --input nix-check.events.jsonl \
+            --json-output nix-build-timings.json \
+            --markdown-output nix-build-timings.md \
+            --summary-file "${GITHUB_STEP_SUMMARY:-/dev/null}"
+      - name: Upload Nix diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nix-check-${{ matrix.platform.name }}
+          retention-days: 7
+          path: |
+            nix-check.events.jsonl
+            nix-native-system.stderr
+            nix-check-exit-code.txt
+            nix-runner-diagnostics.txt
+            nix-check-plan-eval.stderr
+            nix-check-dry-run.txt
+            nix-build-timings.json
+            nix-build-timings.md
+          if-no-files-found: warn

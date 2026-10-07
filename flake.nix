@@ -47,7 +47,7 @@
       url = "github:hackr-sh/ghostty-shaders";
       flake = false;
     };
-    # Publish Azithro, then run `nix flake update azithro` to pin its revision.
+    # Track upstream; flake.lock pins the deployed revision.
     azithro = {
       url = "github:ELD/azithro";
       flake = false;
