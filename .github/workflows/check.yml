@@ -60,8 +60,7 @@ jobs:
           fi
           echo "Native Nix system: $native_system" | tee -a nix-runner-diagnostics.txt
 
-          checks_json="$(nix eval "${nix_flags[@]}" --no-write-lock-file --json --apply builtins.attrNames ".#checks.${native_system}" 2>nix-check-plan-eval.stderr)"
-          if [ $? -ne 0 ]; then
+          if ! checks_json="$(nix eval "${nix_flags[@]}" --no-write-lock-file --json --apply builtins.attrNames ".#checks.${native_system}" 2>nix-check-plan-eval.stderr)"; then
             cat nix-check-plan-eval.stderr
             echo "Could not evaluate native check names; skipping dry-run plan." | tee -a nix-runner-diagnostics.txt
             exit 0
