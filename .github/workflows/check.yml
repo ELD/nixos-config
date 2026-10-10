@@ -161,7 +161,7 @@ jobs:
             --summary-file "${GITHUB_STEP_SUMMARY:-/dev/null}"
       - name: Upload Nix diagnostics
         if: always() && env.NIX_CI_PROFILE == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nix-check-${{ matrix.platform.name }}
           retention-days: 7
