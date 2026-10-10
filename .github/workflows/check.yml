@@ -4,6 +4,13 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      enable_profiling:
+        description: Enable detailed Nix check profiling and diagnostics
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: check-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.head_ref || github.ref_name }}
@@ -21,6 +28,10 @@ jobs:
           - { name: Linux, distro: ubuntu-latest }
           - { name: macOS, distro: macos-latest }
     runs-on: ${{ matrix.platform.distro }}
+    env:
+      # A manual boolean input (including false) takes precedence over the repo variable.
+      # On push/PR runs, set repository variable NIX_CI_PROFILE to "true" to opt in; otherwise it is off.
+      NIX_CI_PROFILE: ${{ github.event_name == 'workflow_dispatch' && (inputs.enable_profiling && 'true' || 'false') || vars.NIX_CI_PROFILE || 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -32,22 +43,29 @@ jobs:
         uses: DeterminateSystems/determinate-nix-action@v3.23.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          extra-conf: lazy-trees = true
+          extra-conf: |
+            lazy-trees = true
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
       # - name: Use FlakeHub Cache
       #   uses: DeterminateSystems/flakehub-cache-action@main
-      - name: Record runner and Nix diagnostics; plan native checks
+      - name: Record runner and Nix diagnostics
         continue-on-error: true
         shell: bash
         run: |
-          set +e
           {
             echo "Runner OS: $(uname -s)"
             echo "Runner architecture: $(uname -m)"
             nix --version
-            echo "Configured substituters:"
-            nix show-config | grep '^substituters ='
+            echo "Nix cache and parallelism settings:"
+            nix config show | grep -E '^(substituters|trusted-substituters|trusted-public-keys|max-jobs|cores) ='
           } 2>&1 | tee nix-runner-diagnostics.txt
-
+      - name: Plan native checks (profiling only)
+        if: env.NIX_CI_PROFILE == 'true'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
           nix_flags=(--show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure)
           native_system="$(nix eval "${nix_flags[@]}" --no-write-lock-file --raw --expr 'builtins.currentSystem' 2>nix-native-system.stderr)"
           native_system_status=$?
@@ -73,6 +91,10 @@ jobs:
           if [ ${#installables[@]} -gt 0 ]; then
             echo "Native check dry-run installables: ${installables[*]}"
             nix build --dry-run --no-write-lock-file --no-link "${installables[@]}" "${nix_flags[@]}" 2>&1 | tee nix-check-dry-run.txt
+            dry_run_status=${PIPESTATUS[0]}
+            printf '%s\n' "$dry_run_status" > nix-check-dry-run-exit-code.txt
+            echo "Native check dry-run exit status: $dry_run_status" | tee -a nix-runner-diagnostics.txt
+            exit "$dry_run_status"
           else
             echo "No checks found for native Nix system $native_system." | tee nix-check-dry-run.txt
           fi
@@ -97,7 +119,14 @@ jobs:
         shell: bash
         run: |
           set +e
+          if [ "$NIX_CI_PROFILE" != "true" ]; then
+            # Keep the normal check path direct, without profiling or full build logs.
+            nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure
+            exit $?
+          fi
+
           set -o pipefail
+          echo "Starting Nix flake check with profiling enabled (logs saved as structured events)."
           nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure -L --log-format internal-json \
             2>&1 \
             | python3 -u -c 'import datetime, json, sys
@@ -108,19 +137,20 @@ jobs:
               }
               print(json.dumps(event, ensure_ascii=False), flush=True)
           ' \
-            | tee nix-check.events.jsonl
+            > nix-check.events.jsonl
           pipeline_status=("${PIPESTATUS[@]}")
           nix_status=${pipeline_status[0]}
           printf '%s\n' "$nix_status" > nix-check-exit-code.txt
+          echo "Nix flake check finished with exit status $nix_status; structured events saved to nix-check.events.jsonl."
           if [ "$nix_status" -ne 0 ]; then
             exit "$nix_status"
           fi
-          if [ "${pipeline_status[1]}" -ne 0 ] || [ "${pipeline_status[2]}" -ne 0 ]; then
-            echo "Nix event logging failed (filter=${pipeline_status[1]}, tee=${pipeline_status[2]})." >&2
+          if [ "${pipeline_status[1]}" -ne 0 ]; then
+            echo "Nix event logging failed (filter=${pipeline_status[1]})." >&2
             exit 1
           fi
       - name: Summarize Nix build timings
-        if: always()
+        if: always() && env.NIX_CI_PROFILE == 'true'
         continue-on-error: true
         shell: bash
         run: |
@@ -130,7 +160,7 @@ jobs:
             --markdown-output nix-build-timings.md \
             --summary-file "${GITHUB_STEP_SUMMARY:-/dev/null}"
       - name: Upload Nix diagnostics
-        if: always()
+        if: always() && env.NIX_CI_PROFILE == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: nix-check-${{ matrix.platform.name }}
@@ -142,6 +172,7 @@ jobs:
             nix-runner-diagnostics.txt
             nix-check-plan-eval.stderr
             nix-check-dry-run.txt
+            nix-check-dry-run-exit-code.txt
             nix-build-timings.json
             nix-build-timings.md
           if-no-files-found: warn

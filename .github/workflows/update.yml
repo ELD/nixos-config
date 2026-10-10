@@ -60,7 +60,10 @@ jobs:
         uses: DeterminateSystems/determinate-nix-action@v3.23.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          extra-conf: lazy-trees = true
+          extra-conf: |
+            lazy-trees = true
+            extra-substituters = https://cache.numtide.com
+            extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
       - name: Update selected inputs
         env:
           GROUP: ${{ steps.group.outputs.name }}

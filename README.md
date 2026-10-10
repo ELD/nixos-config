@@ -73,7 +73,7 @@ These slots separate input contents and prevent an unconditional personal fetch,
 
 ## Build, check, and switch
 
-Run these from the checkout (only the optional `-editable` outputs require it at `~/.nixos-config`):
+The flake advertises the Numtide cache through `nixConfig`. On local commands, allow these settings with `--accept-flake-config` (or accept Nix's prompt); host configuration also persists the cache after activation. Run the commands from the checkout (only the optional `-editable` outputs require it at `~/.nixos-config`):
 
 ```sh
 nix develop                         # development tools
@@ -158,4 +158,14 @@ For a fresh NixOS install, `modules/nixos/disk-config.nix` still contains `/dev/
 - `GHA_DK` is an SSH private key still used by Actions checkout for the legacy SigmaVim submodule; remove that requirement as part of the separate retirement change. Default flake checks do not access a secrets repository. Grant it read-only access; GitHub deploy keys cannot be shared between repositories. Eric alone rotates this key by adding a replacement public key, updating the Actions secret, verifying CI, and revoking the old key. Never commit the private key.
 - `REPO_ACCESS_TOKEN` is a fine-grained token for the update workflow to push its branch and open/label a PR. Grant repository Contents, Pull requests, and Issues read/write access. It is separate from `GITHUB_TOKEN` so the resulting PR can run checks.
 
-Checks run for pushes and pull requests on Linux and macOS. Scheduled input updates run Monday (core), Wednesday (Homebrew), and Friday (developer tools); the same groups can be selected with `workflow_dispatch`. The updater tests each new lock file before opening an independent PR. If two PRs change `flake.lock`, re-run or rebase the second after the first merges.
+Checks run for pushes to `main` and pull requests on Linux and macOS. Detailed profiling is off by default. For a manual check run, select **Enable detailed Nix check profiling and diagnostics** in Actions, or run:
+
+```sh
+gh workflow run check.yml -f enable_profiling=true
+```
+
+The input sets the job environment variable `NIX_CI_PROFILE`. For push/PR runs, set the repository Actions variable `NIX_CI_PROFILE` to `true` to opt in; unset it or set it to `false` to disable profiling. Manual runs always honor their checkbox, even when that repository variable is enabled. Profiling includes the native-check dry run, timestamped event artifact, and timing summary; the full event stream is not echoed to the console.
+
+Both Nix workflows configure Numtide's public cache independently of profiling. Local flake commands can opt into the same cache with `--accept-flake-config`, and switching either host persists its cache settings.
+
+Scheduled input updates run Monday (core), Wednesday (Homebrew), and Friday (developer tools); the same groups can be selected with `workflow_dispatch`. The updater tests each new lock file before opening an independent PR. If two PRs change `flake.lock`, re-run or rebase the second after the first merges.
