@@ -35,6 +35,10 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    zigzag-homebrew-tap = {
+      url = "github:ZigaoWang/homebrew-tap";
+      flake = false;
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -76,6 +80,7 @@
       homebrew-bundle,
       homebrew-core,
       homebrew-cask,
+      zigzag-homebrew-tap,
       home-manager,
       nixpkgs,
       disko,
@@ -355,6 +360,7 @@
                   "homebrew/homebrew-core" = homebrew-core;
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
+                  "zigaowang/homebrew-tap" = zigzag-homebrew-tap;
                 };
                 mutableTaps = false;
                 autoMigrate = true;

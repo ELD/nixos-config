@@ -18,5 +18,6 @@
     air
     golangci-lint
     templ
+    delve
   ];
 }

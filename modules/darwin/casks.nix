@@ -52,5 +52,6 @@ _:
   "veracrypt"
   "visual-studio-code"
   "vorssaint"
+  "zigaowang/tap/zigzag"
   "zoom"
 ]

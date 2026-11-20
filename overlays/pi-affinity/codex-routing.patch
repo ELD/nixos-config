@@ -1,0 +1,23 @@
+--- a/dist/api/openai-codex-responses.js
++++ b/dist/api/openai-codex-responses.js
+@@ -1308,7 +1308,8 @@
+     headers.set("accept", "text/event-stream");
+     headers.set("content-type", "application/json");
+     if (sessionId) {
+-        headers.set("session-id", sessionId);
++        // Routing affinity must not change the child's request/connection identity.
++        if (!headers.has("session-id")) headers.set("session-id", sessionId);
+         headers.set("x-client-request-id", sessionId);
+     }
+     return headers;
+@@ -1321,7 +1322,8 @@
+     headers.delete("openai-beta");
+     headers.set("OpenAI-Beta", OPENAI_BETA_RESPONSES_WEBSOCKETS);
+     headers.set("x-client-request-id", requestId);
+-    headers.set("session-id", requestId);
++    // Preserve caller-supplied routing, not its WebSocket cache key.
++    if (!headers.has("session-id")) headers.set("session-id", requestId);
+     return headers;
+ }
+ //# sourceMappingURL=openai-codex-responses.js.map
+\ No newline at end of file

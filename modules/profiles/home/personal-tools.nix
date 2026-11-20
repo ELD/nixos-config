@@ -38,7 +38,9 @@
     texliveFull
     codex
     opencode
+    opencode2
     pi
+    pi-affinity # Opt-in patched Pi, exposed as `pia`; stock `pi` is unchanged.
     tuicr
     zigpkgs.master
     wrangler

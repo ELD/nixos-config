@@ -18,7 +18,7 @@ in
     brews = [ ];
     casks = pkgs.callPackage ./casks.nix { };
     onActivation = {
-      autoUpdate = true;
+      autoUpdate = false;
       upgrade = true;
       cleanup = "zap";
     };
@@ -91,8 +91,8 @@ in
       entries = [
         { path = "/System/Applications/Apps.app"; }
         { path = "/Applications/Ghostty.app"; }
+        { path = "/Applications/Rex Beta.app"; }
         { path = "/Applications/Dia.app"; }
-        { path = "/Applications/Orion.app"; }
         { path = "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/"; }
         { path = "/System/Applications/Messages.app"; }
         { path = "/System/Applications/Mail.app"; }
