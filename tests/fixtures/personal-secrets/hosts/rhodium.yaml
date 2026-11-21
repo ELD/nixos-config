@@ -1,1 +1,19 @@
-# CI-only validation fixture; intentionally contains no secrets.
+# CI-only placeholders encrypted to a disposable age recipient. No private key is retained.
+mac_licenses: ENC[AES256_GCM,data:mp/48fyioTkfird2s1Q=,iv:oOtz28ztAvhhKWd/F2X05MWKvUyZH59dsPqoTuyM3rU=,tag:jLmOpQQK4GbuotcvIy5Zew==,type:str]
+netrc: ENC[AES256_GCM,data:PtsVDniS/dqclWC7mbc=,iv:8Opx0D89nKmN0hTc8XuU8aYKQ2KgVEinqWZwuMw+4Vg=,tag:8pePgTjABt71GO0GtIcRGg==,type:str]
+openai_env: ENC[AES256_GCM,data:DS5+/V72wvRHK5Pj9zI=,iv:PZi/nyfPik3K+1tEO+WiOHOIucAqTATDeMyOaq7cDrw=,tag:A4h36bY0EZMkbqLPO+Xung==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxdGNZTEZVSTVLcWFMd2Jo
+            cWlMRHpTRVgrUHNXZU1yenZVTTU0WXUyakNFCkxPRzFQS1VoeHI5bHN6TFdBZDh5
+            OXZiRUhOUXk3N1pvaTJNclJhbTlHRFEKLS0tIC9CYXJNb29TazVrdTRJYjFsMXVk
+            THZIMnNQYVpSelV3OHFvU3FlL2RxUDAKWRFhfauqkJLAuGzlk0BoyAMRCXboXjGs
+            2dfP84d2jULl81WLUX4kQyZTalNG8puq5DfpT9gP2K3Ml3XZRvtgSg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1hua9z3wr9ncusxx6awrx0nfwfqvu3x3xsrfjp7flarkflmelaevsg9hde9
+    lastmodified: "2026-11-21T21:12:56Z"
+    mac: ENC[AES256_GCM,data:FSJfQiKUzrVydKE1vq7pRB05gcHRImBzrnqOQ1htnmRo0eevLWyO4ZPf/hMehfhUpudRRW4zLDszsozuxk19qgix8Nqcb3oEDEOqRKDdsI89coDVsxS5EjBhKRUA049tVwEFrcMjBNorF5vJSnOlvkCpVs0/wapEQTSyUEFvp7g=,iv:m0e8zwPV95+Pxv5+iaks354SbZh7KFgN6WweitF3jcw=,tag:54t7cC66UjIrVLE5DOB82w==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.13.3

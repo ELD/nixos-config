@@ -133,7 +133,7 @@ home-manager switch --flake '.#edattore-editable@aarch64-darwin'
 home-manager switch --flake '.#edattore-editable@x86_64-linux'
 ```
 
-CI runs `nix flake check` on Linux and macOS. Since Rhodium opts into a private input, CI supplies the checked-in empty `tests/fixtures/personal-secrets` path solely to satisfy the configured-file existence check; it has no secret contents and is never decrypted or activated. The flake also exposes a `formatter` (`nix fmt flake.nix`) and checks for nixfmt, deadnix, statix, Actionlint, and ShellCheck. ShellCheck currently treats errors as failures; warnings in older scripts remain to be cleaned up. The update workflow uses `nix flake check --all-systems --no-build --no-write-lock-file` with that same CI-only path as an evaluation-only lock-file preflight.
+CI runs `nix flake check` on Linux and macOS. Since Rhodium opts into a private input, CI supplies `tests/fixtures/personal-secrets`, which contains encrypted placeholders for the keys Rhodium declares. The macOS build validates those keys without fetching personal secrets, decrypting the fixture, or activating it. The flake also exposes a `formatter` (`nix fmt flake.nix`) and checks for nixfmt, deadnix, statix, Actionlint, and ShellCheck. ShellCheck currently treats errors as failures; warnings in older scripts remain to be cleaned up. The update workflow uses `nix flake check --all-systems --no-build --no-write-lock-file` with that same CI-only path as an evaluation-only lock-file preflight.
 
 ## Editable and immutable files
 

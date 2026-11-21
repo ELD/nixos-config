@@ -98,4 +98,4 @@ jobs:
             dependencies
           body: |
             Updates the ${{ steps.group.outputs.name }} input group.
-            `nix flake check --all-systems --no-build --no-write-lock-file` passed before opening this PR, using the checked-in empty CI-only Rhodium secrets-path fixture (no secrets are fetched or decrypted).
+            `nix flake check --all-systems --no-build --no-write-lock-file` passed before opening this PR, using the checked-in CI-only Rhodium secrets fixture (no secrets are fetched or decrypted).
