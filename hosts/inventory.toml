@@ -17,6 +17,10 @@ profiles = ["personal", "development"]
 legacyHome = true
 editableHome = true
 
+[hosts.rhodium.secrets]
+repo = "personal"
+file = "hosts/rhodium.yaml"
+
 [hosts.indium]
 platform = "nixos"
 system = "x86_64-linux"

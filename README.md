@@ -71,15 +71,25 @@ Then supply **only** that input when evaluating/building, e.g. `nix flake check 
 
 These slots separate input contents and prevent an unconditional personal fetch, but are not a hard security boundary if you override both in one invocation. For strict isolation use separate wrapper flakes/accounts and distinct decryption keys. The legacy SigmaVim submodule still has a separate SSH dependency until it is retired; it no longer supplies the Neovim configuration.
 
+On Rhodium, the local Darwin apps `nix run .#build -- rhodium`, `nix run .#build-switch -- rhodium`, `nix run .#build-hm`, and `nix run .#check` automatically override only `personal-secrets`. They use `$HOME/workspace/nix/nix-secrets` by default; set `PERSONAL_SECRETS_PATH` to use a different local checkout. The Home Manager app activates after building, and `build-switch` performs a system switch. The wrappers preserve explicit `--override-input personal-secrets ...` arguments and add `--no-write-lock-file`, so the local path is not written to `flake.lock`. The path is resolved from the invoking user's `HOME` before `sudo` is run for a system switch; no `sudo`-preserved `HOME` is needed. The local checkout must be readable by the Nix daemon/root for a switch. These are local opt-in conveniences: raw Nix commands, CI, Indium, and work profiles are unchanged and do not get the personal override.
+
+`nix run` evaluates the outer app before its script can add an input override to the inner build. This flake keeps app discovery independent of secrets, but on an older checkout that still reports the Rhodium secrets assertion before the app starts, pass the override to the outer command as an immediate workaround (the app script may also add the same local override to its build):
+
+```sh
+nix run --no-write-lock-file \
+  --override-input personal-secrets "path:$HOME/workspace/nix/nix-secrets" \
+  .#build -- rhodium
+```
+
 ## Build, check, and switch
 
 The flake advertises the Numtide cache through `nixConfig`. On local commands, allow these settings with `--accept-flake-config` (or accept Nix's prompt); host configuration also persists the cache after activation. Run the commands from the checkout (only the optional `-editable` outputs require it at `~/.nixos-config`):
 
 ```sh
 nix develop                         # development tools
-nix flake check                     # evaluation and build checks
-
-nix build '.#darwinConfigurations."rhodium@aarch64-darwin".system'
+nix run .#check                     # local Rhodium check with personal-secrets override
+nix run .#build -- rhodium          # Rhodium system build with personal-secrets override
+nix run .#build-hm                  # Rhodium Home Manager build and activation
 nix build '.#nixosConfigurations."indium@x86_64-linux".config.system.build.toplevel'
 nix build '.#homeConfigurations."edattore@aarch64-darwin".activationPackage'
 nix build '.#homeConfigurations."edattore@x86_64-linux".activationPackage'
@@ -88,7 +98,7 @@ nix build '.#homeConfigurations."edattore@x86_64-linux".activationPackage'
 Switch a full host with its native tool:
 
 ```sh
-sudo darwin-rebuild switch --flake '.#rhodium@aarch64-darwin'
+nix run .#build-switch -- rhodium  # Rhodium build and system switch with personal-secrets override
 sudo nixos-rebuild switch --flake '.#indium@x86_64-linux'
 ```
 
@@ -102,7 +112,7 @@ home-manager switch --flake '.#edattore-editable@aarch64-darwin'
 home-manager switch --flake '.#edattore-editable@x86_64-linux'
 ```
 
-CI runs `nix flake check` on Linux and macOS. The flake also exposes a `formatter` (`nix fmt flake.nix`) and checks for nixfmt, deadnix, statix, Actionlint, and ShellCheck. ShellCheck currently treats errors as failures; warnings in older scripts remain to be cleaned up. The update workflow uses `nix flake check --all-systems --no-build --no-write-lock-file` as an evaluation-only lock-file preflight.
+CI runs `nix flake check` on Linux and macOS. Since Rhodium opts into a private input, CI supplies the checked-in empty `tests/fixtures/personal-secrets` path solely to satisfy the configured-file existence check; it has no secret contents and is never decrypted or activated. The flake also exposes a `formatter` (`nix fmt flake.nix`) and checks for nixfmt, deadnix, statix, Actionlint, and ShellCheck. ShellCheck currently treats errors as failures; warnings in older scripts remain to be cleaned up. The update workflow uses `nix flake check --all-systems --no-build --no-write-lock-file` with that same CI-only path as an evaluation-only lock-file preflight.
 
 ## Editable and immutable files
 
@@ -147,9 +157,9 @@ There is no supported one-command installer. The old `apply` scripts were remove
 
 1. Install Nix with flakes enabled, then clone this repository with its submodules, for example:
    `git clone git@github.com:ELD/nixos-config.git ~/.nixos-config`. Initialize the legacy SigmaVim submodule only if you need it. Choose any location for store-backed Home Manager outputs; the `-editable` outputs use `~/.nixos-config` and require the separate Azithro checkout described above.
-2. If enabling personal secrets, confirm SSH access to the personal secrets repository and initialize the YubiKey/GPG and sops setup. A default build needs no secrets-repo access.
+2. For Rhodium's opted-in secrets, confirm SSH access to the personal secrets repository and initialize the YubiKey/GPG and sops setup. App discovery and other hosts do not need that repository, but evaluating/building Rhodium's full system requires its configured ciphertext file. The local Darwin apps above supply the local input path without writing it to `flake.lock`.
 3. Only when opting into personal secrets, restore `/var/lib/sops-nix/key.txt` before activating the host; work defaults to a different key file (see above). Indium currently declares no sops secrets.
-4. Run `nix flake check`, build the target, and then use the native switch command above.
+4. Run `nix run .#check` on Rhodium (or pass the secrets input explicitly to a raw `nix flake check`), build the target, and then use the native switch command above. For a raw check, use `nix flake check --no-write-lock-file --override-input personal-secrets "path:$HOME/workspace/nix/nix-secrets"` when checking Rhodium.
 
 For a fresh NixOS install, `modules/nixos/disk-config.nix` still contains `/dev/%DISK%`. Replace that placeholder with the intended device (prefer `/dev/disk/by-id/...`) and review the partition layout before building or using disko. Disko **erases the selected disk**. The host configuration is specific to Indium; do not run it against another machine without reviewing its hardware and boot settings. A repeatable `nixos-anywhere` installer is a future task, not a working command yet. For a bad generation, keep the previous generation and use `darwin-rebuild switch --rollback`, `nixos-rebuild switch --rollback`, or the Home Manager generation list/rollback commands. Restore SSH and sops access before attempting another switch.
 

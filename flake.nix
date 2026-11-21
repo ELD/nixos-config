@@ -20,6 +20,9 @@
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    determinate = {
+      url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+    };
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
     };
@@ -76,6 +79,7 @@
     {
       self,
       darwin,
+      determinate,
       nix-homebrew,
       homebrew-bundle,
       homebrew-core,
@@ -165,8 +169,6 @@
         assert lib.assertMsg (
           !(lib.elem "work" entry.profiles) || entry ? email
         ) "Work host ${key} needs its own email (do not inherit the personal Git identity)";
-        assert lib.assertMsg validSecrets
-          "Host ${key} needs a valid secrets repo/file and an overridden input containing that file";
         assert lib.assertMsg (
           entry.platform != "nixos" || builtins.hasAttr key hostModules
         ) "NixOS host ${key} needs a machine-specific Nix module in hostModules";
@@ -176,7 +178,11 @@
           inherit key;
         }
         // lib.optionalAttrs (secrets != null) {
-          secretsFile = "${inputs."${secrets.repo}-secrets"}/${secrets.file}";
+          secretsFile =
+            # Keep metadata/app discovery independent of private inputs; validate when the host consumes this path.
+            assert lib.assertMsg validSecrets
+              "Host ${key} needs a valid secrets repo/file and an overridden input containing that file";
+            "${inputs."${secrets.repo}-secrets"}/${secrets.file}";
         }
       ) inventory.hosts;
       hostNames =
@@ -199,6 +205,8 @@
       defaultSystems = lib.unique (map (key: hosts.${key}.system) hostNames);
       profileModulesFor =
         kind: host: lib.concatMap (profile: profileModules.${profile}.${kind}) host.profiles;
+      # Force opted-in secret validation for host configurations, but not global output metadata.
+      validateHostSecrets = host: builtins.seq (host.secretsFile or null) host;
       devShell =
         system:
         let
@@ -243,6 +251,7 @@
         "build" = mkApp "build" system;
         "build-hm" = mkApp "build-hm" system;
         "build-switch" = mkApp "build-switch" system;
+        "check" = mkApp "check" system;
         "clean" = mkApp "clean" system;
         "rollback" = mkApp "rollback" system;
       };
@@ -304,7 +313,10 @@
         ) { } hostNames;
       overlays = import ./overlays (inputs // { inherit inputs; });
       mkHomeConfig =
-        host: editable:
+        rawHost: editable:
+        let
+          host = validateHostSecrets rawHost;
+        in
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit (host) system;
@@ -336,7 +348,10 @@
           ];
         };
       mkDarwin =
-        host:
+        rawHost:
+        let
+          host = validateHostSecrets rawHost;
+        in
         darwin.lib.darwinSystem {
           inherit (host) system;
           specialArgs = inputs // {
@@ -348,6 +363,7 @@
             ./modules/shared
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
+            determinate.darwinModules.default
             ./hosts/darwin
           ]
           ++ (hostModules.${host.key} or [ ])
@@ -370,7 +386,10 @@
           ++ profileModulesFor "darwin" host;
         };
       mkNixos =
-        host:
+        rawHost:
+        let
+          host = validateHostSecrets rawHost;
+        in
         nixpkgs.lib.nixosSystem {
           inherit (host) system;
           specialArgs = inputs // {

@@ -1,4 +1,8 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../personal-secrets.sh"
 
 RED='\033[1;31m'
 GREEN='\033[1;32m'
@@ -23,7 +27,13 @@ FLAKE_TARGET="${USERNAME}@${SYSTEM}"
 
 printf "${YELLOW}Building Home Manager configuration: %s${NC}\n" "$FLAKE_TARGET"
 
-nix --extra-experimental-features 'nix-command flakes' \
+PERSONAL_SECRETS_HOST=""
+if [ "$FLAKE_TARGET" = "edattore@aarch64-darwin" ]; then
+  PERSONAL_SECRETS_HOST="rhodium"
+fi
+
+run_with_personal_secrets "$PERSONAL_SECRETS_HOST" \
+  nix --extra-experimental-features 'nix-command flakes' \
   build ".#homeConfigurations.\"${FLAKE_TARGET}\".activationPackage" "$@"
 
 printf "${YELLOW}Activating Home Manager configuration...${NC}\n"

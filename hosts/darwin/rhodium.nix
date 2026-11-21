@@ -16,17 +16,14 @@
       substituters = [
         "https://nix-community.cachix.org?priority=41"
         "https://cache.numtide.com?priority=42"
-        "https://edattore-attic-nix-cache.fly.dev/system?priority=43"
         "https://cache.nixos.org?priority=44"
       ];
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-        "system:dWucq8qYoQI7TrSLdwckDgZinNc23fr1uOi8Qxr8ORc="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
       max-jobs = "auto";
-      netrc-file = "$HOME/.netrc";
     };
 
     gc = {
@@ -52,6 +49,24 @@
       extra-nix-path = nixpkgs=flake:nixpkgs
       upgrade-nix-store-path-url = https://install.determinate.systems/nix-upgrade/stable/universal
     '';
+  };
+
+  determinateNix = {
+    enable = true;
+    determinateNixd.authentication.additionalNetrcSources = [
+      "/Users/${host.username}/.netrc"
+    ];
+    customSettings = {
+      # Preserve the installer settings when nix-darwin takes ownership of nix.custom.conf.
+      trusted-users = [ "root" host.username ];
+      lazy-trees = true;
+      extra-substituters = [
+        "https://edattore-attic-nix-cache.fly.dev/system?priority=43"
+      ];
+      extra-trusted-public-keys = [
+        "system:dWucq8qYoQI7TrSLdwckDgZinNc23fr1uOi8Qxr8ORc="
+      ];
+    };
   };
 
   # Turn off NIX_PATH warnings now that we're using flakes

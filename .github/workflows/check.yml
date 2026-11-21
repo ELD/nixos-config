@@ -60,13 +60,18 @@ jobs:
             echo "Nix cache and parallelism settings:"
             nix config show | grep -E '^(substituters|trusted-substituters|trusted-public-keys|max-jobs|cores) ='
           } 2>&1 | tee nix-runner-diagnostics.txt
+      - name: Test local secret wrappers and Rhodium bootstrap evaluation
+        run: |
+          bash tests/test_personal_secrets_wrapper.sh
+          bash tests/test_aarch64_darwin_launcher_colors.sh
+          bash tests/test_rhodium_bootstrap.sh
       - name: Plan native checks (profiling only)
         if: env.NIX_CI_PROFILE == 'true'
         continue-on-error: true
         shell: bash
         run: |
           set +e
-          nix_flags=(--show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure)
+          nix_flags=(--show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure --override-input personal-secrets path:./tests/fixtures/personal-secrets)
           native_system="$(nix eval "${nix_flags[@]}" --no-write-lock-file --raw --expr 'builtins.currentSystem' 2>nix-native-system.stderr)"
           native_system_status=$?
           if [ -s nix-native-system.stderr ]; then
@@ -90,7 +95,7 @@ jobs:
           done
           if [ ${#installables[@]} -gt 0 ]; then
             echo "Native check dry-run installables: ${installables[*]}"
-            nix build --dry-run --no-write-lock-file --no-link "${installables[@]}" "${nix_flags[@]}" 2>&1 | tee nix-check-dry-run.txt
+            nix build "${nix_flags[@]}" --dry-run --no-write-lock-file --no-link "${installables[@]}" 2>&1 | tee nix-check-dry-run.txt
             dry_run_status=${PIPESTATUS[0]}
             printf '%s\n' "$dry_run_status" > nix-check-dry-run-exit-code.txt
             echo "Native check dry-run exit status: $dry_run_status" | tee -a nix-runner-diagnostics.txt
@@ -121,13 +126,13 @@ jobs:
           set +e
           if [ "$NIX_CI_PROFILE" != "true" ]; then
             # Keep the normal check path direct, without profiling or full build logs.
-            nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure
+            nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure --no-write-lock-file --override-input personal-secrets path:./tests/fixtures/personal-secrets
             exit $?
           fi
 
           set -o pipefail
           echo "Starting Nix flake check with profiling enabled (logs saved as structured events)."
-          nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure -L --log-format internal-json \
+          nix flake check -j auto --show-trace --accept-flake-config --fallback --allow-import-from-derivation --impure --no-write-lock-file --override-input personal-secrets path:./tests/fixtures/personal-secrets -L --log-format internal-json \
             2>&1 \
             | python3 -u -c 'import datetime, json, sys
           for line in sys.stdin:

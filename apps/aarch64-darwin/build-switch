@@ -1,9 +1,13 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+set -e
 
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../personal-secrets.sh"
+
+RED=$'\033[1;31m'
+GREEN=$'\033[1;32m'
+YELLOW=$'\033[1;33m'
+NC=$'\033[0m'
 
 HOST=""
 
@@ -56,10 +60,12 @@ esac
 export NIXPKGS_ALLOW_UNFREE=1
 
 echo "${YELLOW}Starting build...${NC}"
-nix --extra-experimental-features 'nix-command flakes' build ".#darwinConfigurations.${FLAKE_TARGET}.system" "$@"
+run_with_personal_secrets "$HOST" \
+  nix --extra-experimental-features 'nix-command flakes' build ".#darwinConfigurations.${FLAKE_TARGET}.system" "$@"
 
 echo "${YELLOW}Switching to new generation...${NC}"
-sudo ./result/sw/bin/darwin-rebuild switch --flake ".#${FLAKE_TARGET}" "$@"
+run_with_personal_secrets "$HOST" \
+  sudo ./result/sw/bin/darwin-rebuild switch --flake ".#${FLAKE_TARGET}" "$@"
 
 echo "${YELLOW}Cleaning up...${NC}"
 if [ -L ./result ]; then
