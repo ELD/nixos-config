@@ -25,8 +25,18 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - { name: Linux, distro: ubuntu-24.04, system: x86_64-linux, host: indium }
-          - { name: macOS, distro: macos-15, system: aarch64-darwin, host: rhodium }
+          - {
+              name: Linux,
+              distro: ubuntu-24.04,
+              system: x86_64-linux,
+              host: indium,
+            }
+          - {
+              name: macOS,
+              distro: macos-15,
+              system: aarch64-darwin,
+              host: rhodium,
+            }
     runs-on: ${{ matrix.platform.distro }}
     # Store ATTIC_TOKEN only in attic-main, restricted to the main branch.
     environment: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.ATTIC_PUBLISH == 'true' && 'attic-main' || 'checks' }}
@@ -193,7 +203,7 @@ jobs:
           printf '%s' "$ATTIC_TOKEN" > "$auth/token"
           unset ATTIC_TOKEN
           printf '[servers.ci]\nendpoint = "https://edattore-attic-nix-cache.fly.dev/"\ntoken-file = "%s/token"\n' "$auth" > "$auth/attic/config.toml"
-          XDG_CONFIG_HOME="$auth" "$RUNNER_TEMP/attic-client/bin/attic" push --jobs 1 --stdin ci:system < "$RUNNER_TEMP/attic-roots"
+          XDG_CONFIG_HOME="$auth" "$RUNNER_TEMP/attic-client/bin/attic" push --jobs 3 --stdin ci:system < "$RUNNER_TEMP/attic-roots"
           { echo 'Published Attic closure roots:'; sed 's/^/    /' "$RUNNER_TEMP/attic-roots"; } >> "$GITHUB_STEP_SUMMARY"
       - name: Summarize Nix build timings
         if: always() && env.NIX_CI_PROFILE == 'true'
