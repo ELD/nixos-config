@@ -81,6 +81,27 @@ nix run --no-write-lock-file \
   .#build -- rhodium
 ```
 
+## Publish CI outputs to Attic
+
+The native check jobs can publish Indium and Rhodium system and Home Manager closures to the private `system` cache. Publication runs after the native checks pass, only on a push to `main` with the repository variable `ATTIC_PUBLISH=true`. A failed upload fails that job. PRs and manual runs do not publish. Rhodium CI uses the public SOPS fixture: matching dependencies are reusable, but its top-level output can differ from your real host. Do not activate the CI fixture build.
+
+Before enabling uploads:
+
+1. Verify the cache's upstream signing-key filter includes `cache.nixos.org-1` and the other public caches you use, so the first closure upload does not mirror public packages into R2. Review R2 usage after the first run.
+2. In GitHub, create the `attic-main` environment and restrict its deployment branches to `main` only (no tags). Protect changes to `main` and the workflow. Keep the writer out of repository-wide secrets and the `checks` environment.
+3. From the producer checkout with the Fly Machine running, install a scoped writer as an environment secret. In Bash, with tracing off:
+
+   ```bash
+   set +x
+   token=$(./scripts/attic-admin token-ci github-actions '30 days' system) &&
+     test -n "$token" &&
+     printf '%s' "$token" | gh secret set ATTIC_TOKEN --repo ELD/nixos-config --env attic-main
+   unset token
+   ```
+
+4. Set the **repository** Actions variable `ATTIC_PUBLISH` to `true` and push the workflow to `main`. Renew the secret before expiry. Set the variable to `false` to pause uploads without disabling checks.
+5. On Rhodium, choose a path in the macOS job's publication summary that is absent locally. Run `nix-store --store daemon --realise "$p"` with `p` set to that full path. Confirm Nix reports copying it from the Attic URL. Realising a path does not activate it.
+
 ## Build, check, and switch
 
 The flake advertises the Numtide cache through `nixConfig`. On local commands, allow these settings with `--accept-flake-config` (or accept Nix's prompt); host configuration also persists the cache after activation. Run the commands from the checkout (only the optional `-editable` outputs require it at `~/.nixos-config`):
