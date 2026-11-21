@@ -58,7 +58,10 @@
     ];
     customSettings = {
       # Preserve the installer settings when nix-darwin takes ownership of nix.custom.conf.
-      trusted-users = [ "root" host.username ];
+      trusted-users = [
+        "root"
+        host.username
+      ];
       lazy-trees = true;
       extra-substituters = [
         "https://edattore-attic-nix-cache.fly.dev/system?priority=43"
